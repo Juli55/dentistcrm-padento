@@ -1,0 +1,40 @@
+<div id="termin" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">{{ title }}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-8">
+            <form role="form" method="POST" action="/admin/pat/{id}/refer/{id}">
+              <div class="form-group">
+                <label for="lab">Wann :</label>
+                <div class="input-group date" data-provide="datepicker">
+                  <input type="text" id="datepicker" class="datepicker form-control" v-model="selected">
+                  <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-th"></span>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="col-md-4">
+            <label>Vorhandene Termine – "{{ contact.lab.name }}"</label>
+            <ul>
+              <li v-for="date in contact.lab.dates">{{ date.date }}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-default" @click="saveDate(selected)">Los!</button>
+      </div>
+      </form>
+    </div>
+
+  </div>
+</div>

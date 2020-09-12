@@ -1,0 +1,129 @@
+@charset 'utf-8';
+@font-face {
+  font-family: 'Netto';
+  src: url('/assets/fonts/NettoWebPro.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Netto';
+  src: url('/assets/fonts/NettoWebPro-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@import 'settings';
+@import 'bower_components/foundation-sites/scss/foundation';
+// @import 'motion-ui';
+@include foundation-everything;
+// @include motion-ui-transitions;
+// @include motion-ui-animations;
+@import 'components/header';
+@import 'components/footer';
+@import 'components/typo';
+@import 'components/home';
+@import 'components/lab';
+
+.lead {
+  @include breakpoint(small only) {
+    font-size: $global-font-size;
+    font-size: 100%;
+  }
+}
+
+.padento-box {
+  @each $breakpoint,
+  $gutter in $grid-column-gutter {
+    @include breakpoint($breakpoint) {
+      margin-bottom: $gutter;
+    }
+  }
+  border-radius: $global-radius;
+  background-color: $bg-light;
+  .padento-box-head {
+    border-top-right-radius: $global-radius;
+    border-top-left-radius: $global-radius;
+    background-color: $bg-medium;
+    p {
+      margin-bottom: 0;
+    }
+    @each $breakpoint,
+    $gutter in $grid-column-gutter {
+      @include breakpoint($breakpoint) {
+        padding: $gutter/2;
+      }
+    }
+  }
+  .padento-box-content {
+    border-bottom-right-radius: $global-radius;
+    border-bottom-left-radius: $global-radius;
+    background-color: $bg-light;
+    .box-wrap {
+      @each $breakpoint,
+      $gutter in $grid-column-gutter {
+        @include breakpoint($breakpoint) {
+          padding: $gutter/2;
+        }
+      }
+    }
+  }
+}
+
+.padento-form {
+  .button {
+    font-weight: bold;
+    font-size: 120%;
+  }
+  p {
+    small {
+      line-height: 1;
+    }
+  }
+}
+
+.button {
+  box-shadow: 3px 3px 0px darken($primary-color, 10%);
+  &.secondary {
+    box-shadow: 3px 3px 0px darken($secondary-color, 10%);
+    color: $white;
+  }
+}
+
+.your-lab {
+  @each $breakpoint,
+  $gutter in $grid-column-gutter {
+    @include breakpoint($breakpoint) {
+      margin-top: $gutter;
+    }
+  }
+  .button {
+    margin-bottom: 0;
+  }
+}
+
+.besttime {
+  margin-bottom: 30px;
+}
+
+section.videos {
+  margin-top: 30px;
+  .box {
+    background-color: #d6ede7 !important;
+    font-weight: bold;
+    border-top-right-radius: $global-radius;
+    border-top-left-radius: $global-radius;
+    @each $breakpoint,
+    $gutter in $grid-column-gutter {
+      @include breakpoint($breakpoint) {
+        padding: $gutter/2;
+      }
+    }
+    p {
+      margin: 0;
+    }
+  }
+  .box1 {
+    margin-bottom: 30px;
+  }
+}

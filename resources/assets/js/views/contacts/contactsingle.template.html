@@ -1,0 +1,799 @@
+<div>
+    <div class="content">
+        <!--div class="">
+      {{ debug }}
+    </div>
+    <pre>
+      {{ debug | json }}
+    </pre-->
+        <div class="container-fluid">
+            <div id="contact-error"></div>
+            <div id="contact">
+                <div class="print-logo"><img src="/images/logo.png" alt=""></div>
+                <div class="row">
+                    <div class="col-xs-5 col-md-4 contact-data">
+                        <div class="box contact-box">
+                            <div class="row">
+                                <div class="col-xs-11">
+                                    <h4>{{ contact.patientmeta.name }}</h4>
+                                </div>
+                                <a href="javascript:window.print()" class="col-xs-1 action"><i class="fa fa-print"
+                                                                                               aria-hidden="true"
+                                                                                               class="printer"></i></a>
+                            </div>
+                            <dl class="property-fields">
+                                <div class="property-row row">
+                                    <dt class="col-xs-4">Anrede</dt>
+                                    <dd class="col-xs-7">
+                                        <input data-input="salutation" v-model="contact.patientmeta.salutation"
+                                               @blur="saveContact" @keyup.enter="saveContact">
+                                    </dd>
+                                </div>
+                                <div class="property-row row">
+                                    <dt class="col-xs-4">Name</dt>
+                                    <dd class="col-xs-7">
+                                        <input data-input="name" v-model="contact.patientmeta.name" @blur="saveContact"
+                                               @keyup.enter="saveContact">
+                                    </dd>
+                                </div>
+                                <div class="property-row row">
+                                    <dt class="col-xs-4">E-Mail</dt>
+                                    <dd class="col-xs-7">
+                                        <input v-if="contact.confirmed == 1 || isAdmin || isUser" type="email"
+                                               v-model="contact.patientmeta.email" @blur="saveContact"
+                                               @keyup.enter="saveContact" {{ isLab ? 'disabled' : '' }}>
+                                        <div v-else>
+                                            <span class="no-input">
+                            <span class="label label-danger">Unbestätigt</span>
+                                            </span>
+                                        </div>
+                                    </dd>
+                                    <a class="action col-xs-1" v-on:click="approveContact"
+                                       v-if="contact.confirmed != '1'">
+                                        <i class="fa fa-check" aria-hidden="true" data-toggle="tooltip"
+                                           data-placement="right" title="Kontakt bestätigen"></i>
+                                    </a>
+                                    <a v-else href="mailto:{{ contact.patientmeta.email }}" class="action col-xs-1"><i
+                                        class="fa fa-mail"></i></a>
+                                </div>
+                                <div class="property-row row">
+                                    <dt class="col-xs-4">Status</dt>
+                                    <dd class="col-xs-7">
+                                        <span class="no-input">
+                                            <span v-if="contact.confirmed == 1">
+                                                <span class="label label-success">Bestätigt</span>
+                                                <span v-if="isAdmin"> {{ contact.confirmer.name }}</span>
+                                            </span>
+                                            <span v-else class="label label-warning">Unbestätigt</span>
+                                        </span>
+                                    </dd>
+                                    <a class="action col-xs-1" v-on:click="approveContact"
+                                       v-if="contact.confirmed != '1'"><i class="fa fa-check" aria-hidden="true"
+                                                                          data-toggle="tooltip" data-placement="right"
+                                                                          title="Kontakt bestätigen"></i></a>
+                                </div>
+                                <div v-if="isAdmin || isUser" class="property-row row">
+                                    <dt class="col-xs-4">Labor</dt>
+                                    <dd class="col-xs-7">
+                                        <span class="no-input">{{ contact.lab.name }}</span>
+                                    </dd>
+                                    <a class="action col-xs-1" v-if="isAdmin || isUser" data-toggle="modal"
+                                       data-target="#assigncontact">
+                                        <i class="fa fa-share" aria-hidden="true" data-toggle="tooltip"
+                                           data-placement="right" title="Labor auswählen/wechseln"></i>
+                                    </a>
+                                </div>
+                                <div class="property-row row">
+                                    <dt class="col-xs-4">Angefragt am</dt>
+                                    <dd class="col-xs-7"><span class="no-input">{{ contact.created_at.split(/[- :]/)[2].split(' ')[0] }}.{{ contact.created_at.split(/[- :]/)[1] }}.{{ contact.created_at.split(/[- :]/)[0] }} {{ contact.created_at.split(/[- :]/)[2].split(' ')[1] }}:{{ contact.created_at.split(/[- :]/)[3] }} Uhr</span>
+                                    </dd>
+                                </div>
+                                <div class="property-row row">
+                                    <dt class="col-xs-4">Telefon</dt>
+                                    <dd class="col-xs-7">
+                                        <input data-input="tel" v-model="contact.patientmeta.tel" @blur="saveContact"
+                                               @keyup.enter="saveContact">
+                                    </dd>
+                                </div>
+                                <div class="property-row row">
+                                    <dt class="col-xs-4">Mobil</dt>
+                                    <dd class="col-xs-7">
+                                        <input data-input="mobile" v-model="contact.patientmeta.mobile"
+                                               @blur="saveContact" @keyup.enter="saveContact">
+                                    </dd>
+                                </div>
+                                <div class="property-row row">
+                                    <dt class="col-xs-4">Straße</dt>
+                                    <dd class="col-xs-7">
+                                        <input data-input="street" v-model="contact.patientmeta.street"
+                                               @blur="saveContact" @keyup.enter="saveContact">
+                                    </dd>
+                                </div>
+                                <div class="property-row row">
+                                    <dt class="col-xs-4">Ort</dt>
+                                    <dd class="col-xs-7">
+                                        <input data-input="city" v-model="contact.patientmeta.city" @blur="saveContact"
+                                               @keyup.enter="saveContact">
+                                    </dd>
+                                </div>
+                                <div class="property-row row">
+                                    <dt class="col-xs-4">Postleitzahl</dt>
+                                    <dd class="col-xs-7">
+                                        <input data-input="zip" v-model="contact.patientmeta.zip" @blur="saveContact"
+                                               @keyup.enter="saveContact">
+                                    </dd>
+                                </div>
+                                <!-- Custom Probs-->
+                                <!--div class="property-row row" v-for="prop in contact.props">
+                      <dt class="col-xs-4">{{ prop.name }}</dt>
+                      <dd class="col-xs-7"><input @blur="saveProps" @keyup.enter="saveProps" v-model="prop.pivot.value"></dd>
+                    </div-->
+                                <!-- Dates-->
+                                <div class="property-row row" v-if="contact.workday_from || contact.weekend_from">
+                                    <dt class="col-xs-4">Wunschzeit</dt>
+                                    <dd class="col-xs-7">
+                                        <span v-if="contact.workday_from && contact.workday_till">Werktags: {{ contact.workday_from }} - {{ contact.workday_till }}</span>
+                                        <div class="clearfix"></div>
+                                        <span v-if="contact.weekend_from && contact.weekend_till">Samstags: {{ contact.weekend_from }} - {{ contact.weekend_till }}</span>
+                                    </dd>
+                                </div>
+                                <div class="property-row row">
+                                    <dt class="col-xs-4"><strong>Sonstiges</strong></dt>
+                                    <dd class="col-xs-7"></dd>
+                                </div>
+                                <div class="property-row row" v-if="isAdmin || isUser">
+                                    <dt class="col-xs-4">Verwaltungsschleife</dt>
+                                    <dd class="col-xs-7">
+                                        <span class="no-input">
+                                            <span class="label label-default" v-if="contact.queued == 1">Ja</span>
+                                        <span class="label label-default" v-if="contact.queued == 0">nein</span>
+                                        </span>
+                                    </dd>
+                                </div>
+                                <div class="property-row row" v-if="isAdmin || isUser">
+                                    <dt class="col-xs-4">Zurückgeleitet</dt>
+                                    <dd class="col-xs-7"><span class="no-input">{{ contact.movedback }}</span></dd>
+                                </div>
+                                <div class="property-row row">
+                                    <dt class="col-xs-4">Archiviert</dt>
+                                    <dd class="col-xs-7">
+                                        <span class="no-input">
+                                            <span class="label label-default" v-if="contact.archived == 1">Ja</span>
+                                        <span class="label label-default" v-if="contact.archived == 0">nein</span>
+                                        </span>
+                                    </dd>
+                                    <a class="action col-xs-1" @click="saveContact" v-if="contact.archived == 1">
+                                        <i class="fa fa-toggle-on" data-todo="togglearchived" data-archived="0"
+                                           aria-hidden="true" data-toggle="tooltip" data-placement="right"
+                                           title="Kontakt archivieren"></i>
+                                    </a>
+                                    <a class="action col-xs-1" @click="saveContact" v-if="contact.archived == 0">
+                                        <i class="fa fa-toggle-off" @click="saveContact" data-todo="togglearchived"
+                                           data-archived="1" aria-hidden="true" data-toggle="tooltip"
+                                           data-placement="right" title="Kontakt archivieren"></i>
+                                    </a>
+                                </div>
+                            </dl>
+                        </div>
+
+                        <div v-if="!contact.lab">
+                            <div class="box contact-box">
+                                <h4>Termine</h4>
+                                <dl>
+                                    <div class="property-row row">
+                                        <dt class="col-xs-4">Mitarbeitertermin</dt>
+                                        <dd class="col-xs-7">
+                                            <input v-datetimepicker="userDate" v-model="userDate"
+                                                   @keyup.enter="saveEmployeeDate" @blur="saveEmployeeDate">
+                                        </dd>
+                                        <a v-if="userDate" class="action col-xs-1" @click="deleteEmployeeDate">
+                                            <i class="fa fa-trash" data-todo="delete" aria-hidden="true"
+                                               data-toggle="tooltip" data-placement="right"
+                                               title="Mitarbeitertermin löschen"></i>
+                                        </a>
+                                    </div>
+                                </dl>
+                            </div>
+                        </div>
+                        <div v-else>
+                            <div class="box contact-box" v-if="contact.lab">
+                                <h4>Termine</h4>
+                                <dl v-if="isAdmin || isUser">
+                                    <!--<div v-if="contact.lab.membership == 1 || contact.lab.membership == 4">-->
+                                    <div class="property-row row">
+                                        <dt class="col-xs-4">Phasen-Termine</dt>
+                                        <dd class="col-xs-7">
+
+                                        </dd>
+                                        <a class="action col-xs-1" data-toggle="modal" data-target="#myModal"
+                                           ref="/calendar/{{ contact.id }}" @click="calendarClick()">
+                                            <i class="fa fa-calendar-plus-o" aria-hidden="true"
+                                               data-toggle="tooltip" data-placement="right"
+                                               title="Phasen-Termin anlegen"></i>
+                                        </a>
+                                    </div>
+
+                                    <div class="property-row row" v-for="(index, date) in contact.dates">
+                                        <dt class="col-xs-4" v-if="index == 0"></dt>
+                                        <dt class="col-xs-4" v-else="index == 0"></dt>
+                                        <dd class="col-xs-7"><span
+                                            class="no-input">{{ date.date | niceDate }}</span>
+                                            <span :class="date.phase_class">{{ date.phase_label }}</span>
+                                        </dd>
+                                        <a class="action col-xs-1" @click="deleteDate">
+                                            <i class="fa fa-trash" data-todo="delete" data-id="{{ date.id }}"
+                                               aria-hidden="true" data-toggle="tooltip" data-placement="right"
+                                               title="Termin löschen"></i>
+                                        </a>
+                                    </div>
+                                    <!--  </div>-->
+
+                                    <!--<div class="property-row row" v-else>
+                                        <dt class="col-xs-4">Nächster Phasen-Termin</dt>
+                                        <dd class="col-xs-7">
+                                            <input data-input="labdate" v-datetimepicker="labdate" v-model="labdate"
+                                                   @blur="saveContact" @keyup.enter="saveContact">
+                                        </dd>
+                                        <a v-if="labdate" class="action col-xs-1" @click="saveContact">
+                                            <i class="fa fa-trash" data-todo="deletelabdate" aria-hidden="true"
+                                               data-toggle="tooltip" data-placement="right"
+                                               title="Phasen-Termin löschen"></i>
+                                        </a>
+                                    </div>-->
+                                    <div class="property-row row"
+                                         v-if="contact.lab.membership == 1 || contact.lab.membership == 4">
+                                        <dt class="col-xs-4">Mitarbeitertermin</dt>
+                                        <dd class="col-xs-7">
+                                            <input v-datetimepicker="userDate" v-model="userDate"
+                                                   @keyup.enter="saveEmployeeDate" @blur="saveEmployeeDate">
+                                        </dd>
+                                        <a v-if="userDate" class="action col-xs-1" @click="deleteEmployeeDate">
+                                            <i class="fa fa-trash" data-todo="delete" aria-hidden="true"
+                                               data-toggle="tooltip" data-placement="right"
+                                               title="Mitarbeitertermin löschen"></i>
+                                        </a>
+                                    </div>
+                                </dl>
+                                <dl v-if="isLab">
+                                    <!--<div v-if="contact.lab.membership == 1 || contact.lab.membership == 4">-->
+                                    <div class="property-row row">
+                                        <dt class="col-xs-4">Phasen-Termine</dt>
+                                        <dd class="col-xs-7">
+
+                                        </dd>
+                                        <a class="action col-xs-1" data-toggle="modal" data-target="#myModal"
+                                           ref="/calendar/{{ contact.id }}" @click="calendarClick()">
+                                            <i class="fa fa-calendar-plus-o" aria-hidden="true"
+                                               data-toggle="tooltip" data-placement="right"
+                                               title="Phasen-Termin anlegen"></i>
+                                        </a>
+                                    </div>
+
+                                    <div class="property-row row" v-for="(index, date) in contact.dates">
+                                        <dt class="col-xs-4" v-if="index == 0"></dt>
+                                        <dt class="col-xs-4" v-else="index == 0"></dt>
+                                        <dd class="col-xs-7"><span
+                                            class="no-input">{{ date.date | niceDate }}</span>
+                                            <span :class="date.phase_class">{{ date.phase_label }}</span>
+                                        </dd>
+                                        <a class="action col-xs-1" @click="deleteDate">
+                                            <i class="fa fa-trash" data-todo="delete" data-id="{{ date.id }}"
+                                               aria-hidden="true" data-toggle="tooltip" data-placement="right"
+                                               title="Termin löschen"></i>
+                                        </a>
+                                    </div>
+                                    <!-- </div>-->
+                                    <!--<div class="property-row row" v-else>
+                                        <dt class="col-xs-4">Phasen-Termin</dt>
+                                        <dd class="col-xs-7">
+                                            <input data-input="labdate" v-datetimepicker="labdate" v-model="labdate"
+                                                   @blur="saveContact" @keyup.enter="saveContact">
+                                        </dd>
+                                        <a v-if="labdate" class="action col-xs-1" @click="saveContact">
+                                            <i class="fa fa-trash" data-todo="deletelabdate" aria-hidden="true"
+                                               data-toggle="tooltip" data-placement="right"
+                                               title="Phasen-Termin löschen"></i>
+                                        </a>
+                                    </div>-->
+                                </dl>
+                            </div>
+                        </div>
+
+                        <div v-if="!contact.lab">
+                            <div class="box contact-box">
+                                <h4>Labor</h4>
+                                <dl>
+                                    <div class="property-row row">
+                                        <dt class="col-xs-4">Kein Labor</dt>
+                                        <dd class="col-xs-7">
+                                        </dd>
+                                        <a class="action col-xs-1" v-if="isAdmin || isUser"
+                                           data-toggle="modal"
+                                           data-target="#assigncontact">
+                                            <i class="fa fa-share" aria-hidden="true" data-toggle="tooltip"
+                                               data-placement="right" title="Labor auswählen/wechseln"></i>
+                                        </a>
+                                    </div>
+                                </dl>
+                            </div>
+                        </div>
+                        <div v-else>
+                            <div class="box contact-box" v-if="isAdmin || isUser">
+                                <h4>{{ contact.lab.name }}</h4>
+                                <dl>
+                                    <div class="property-row row">
+                                        <dt class="col-xs-4">Labor</dt>
+                                        <dd class="col-xs-7">
+                                            <span class="no-input">{{ contact.lab.name }}</span>
+                                        </dd>
+                                        <a class="action col-xs-1" v-if="isAdmin || isUser"
+                                           data-toggle="modal"
+                                           data-target="#assigncontact">
+                                            <i class="fa fa-share" aria-hidden="true" data-toggle="tooltip"
+                                               data-placement="right" title="Labor auswählen/wechseln"></i>
+                                        </a>
+                                    </div>
+                                    <div class="property-row row">
+                                        <dt class="col-xs-4">Ansprechpartner</dt>
+                                        <dd class="col-xs-7"><span class="no-input">{{ contact.lab.labmeta.contact_person }}</span>
+                                        </dd>
+                                    </div>
+                                    <div class="property-row row">
+                                        <dt class="col-xs-4">E-Mail-Adresse</dt>
+                                        <dd class="col-xs-7"><span
+                                            class="no-input">{{ contact.lab.user.email }}</span>
+                                        </dd>
+                                    </div>
+                                    <div class="property-row row">
+                                        <dt class="col-xs-4">Telefon</dt>
+                                        <dd class="col-xs-7"><span
+                                            class="no-input">{{ contact.lab.labmeta.tel }}</span>
+                                        </dd>
+                                    </div>
+                                    <div class="property-row row">
+                                        <dt class="col-xs-4">Straße</dt>
+                                        <dd class="col-xs-7"><span
+                                            class="no-input">{{ contact.lab.labmeta.street }}</span></dd>
+                                    </div>
+                                    <div class="property-row row">
+                                        <dt class="col-xs-4">Ort</dt>
+                                        <dd class="col-xs-7"><span class="no-input">{{ contact.lab.labmeta.zip }} {{ contact.lab.labmeta.city }}</span>
+                                        </dd>
+                                    </div>
+                                </dl>
+                            </div>
+                        </div>
+
+                        <!--div class="box contact-box" v-if="isAdmin || isUser || isLab" id="attachements">
+                            <div class="row">
+                                <div class="col-xs-11">
+                                    <h4>Dokumente</h4>
+                                </div>
+                            </div>
+                            <form action="/attachments/upload/{{ contact.token }}"
+                                  style="border: 1px solid #eee; padding: 5px; margin-bottom:20px;" method="post"
+                                  enctype="multipart/form-data">
+                                <div class="row">
+                                    <input type="hidden" name="_token" v-model="csrf">
+                                    <div class="col-xs-6 columns">
+                                        <input type="file" name="attachment">
+                                    </div>
+                                    <div class="col-xs-6 columns">
+                                        <button class="btn btn-primary btn-xs" type="submit">
+                                            <i class="fa fa-upload"></i> Upload file
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <dl v-if="contact.attachments.length">
+                                <div v-for="attachment in contact.attachments" class="property-row row">
+                                    <dt class="col-xs-2" style="padding: 3px 0">
+                                        <i class="fa fa-download"></i>
+                                    </dt>
+                                    <dd class="col-xs-10">
+                                            <span class="no-input">
+                                                <a href="/attachments/{{ attachment.id }}">
+                                                    <small>{{ attachment.path }}</small>
+                                                </a>
+                                            </span>
+                                    </dd>
+                                </div>
+                            </dl>
+                            <p v-else>
+                                <small><i>Dieser Kontakt hat noch keine Dokumente. Laden Sie Dokumente hoch oder
+                                    bitten
+                                    Sie
+                                    den Kontakt darum.</i></small>
+                            </p>
+                            <div class="row" style="margin-top:20px;">
+                                <div class="col-xs-11">
+                                    <h4>Dokumente anfordern</h4>
+                                    <p>
+                                        Kontakt erhält eine Mail mit der Bitte Dokumente hochzuladen.
+                                    </p>
+                                    <p>
+                                        <small><strong>Achtung:</strong> Mit dem Klick auf den Button wird sofort
+                                            eine
+                                            Mail
+                                            versendet.
+                                        </small>
+                                    </p>
+                                    <a href="#" @click.prevent="sendAttachmentReminder"
+                                       class="btn btn-xs btn-primary">
+                                        <i class="fa fa-bell"></i> Dokumente anfragen
+                                    </a>
+                                </div>
+                            </div>
+                        </div-->
+
+                        <div class="box contact-box">
+                            <h4>Todo Liste:</h4>
+                            <hr>
+                            <form>
+                                <div class="input-group" v-if="editTaskForm">
+                                    <input v-model="editTaskForm.title" v-focus="true" type="text" class="form-control"
+                                           autofocus>
+                                    <span class="input-group-btn">
+                                        <button type="submit" class="btn btn-primary" @click.prevent="updateTask()">
+                                            Todo bearbeiten
+                                        </button>
+                                    </span>
+                                </div>
+                                <div class="input-group" v-else>
+                                    <input v-model="taskForm.title" type="text" class="form-control">
+                                    <span class="input-group-btn">
+                                        <button type="submit" class="btn btn-primary" @click.prevent="createTask()">
+                                            Todo hinzufügen
+                                        </button>
+                                    </span>
+                                </div>
+                            </form>
+                            <hr>
+                            <ul class="list-group" v-if="sortedTasks.length"
+                                v-sortable="{handle: '.handle', onUpdate: sortTasks, onMove: handleTaskMove}">
+                                <li class="list-group-item" v-for="task in sortedTasks" :key="task.id">
+                                    <input type="checkbox" :checked="task.completed_at" @change="toggleComplete(task)"
+                                           style="width: 5% !important">
+                                    {{ task.title }}
+                                    <div class="pull-right">
+                                        <i @click="editTask(task)" style="cursor:pointer;" class="fa fa-edit"></i>
+                                        <i v-if="isAdmin || isLab" @click="deleteTask(task)"
+                                           style="color:red; cursor:pointer;" class="fa fa-trash"></i>
+                                        <i class="fa fa-arrows handle"></i>
+                                    </div>
+
+                                    <div class="clearfix"></div>
+                                </li>
+                            </ul>
+                        </div>
+
+
+                        <div class="box contact-box" v-if="isAdmin || isUser">
+                            <h4>Akquise</h4>
+                            <dl>
+                                <div class="property-row row">
+                                    <dt class="col-xs-4">Seite vor dem Ausfüllen</dt>
+                                    <dd class="col-xs-7"><span class="no-input">{{ contact.patientmeta.ref }}</span>
+                                    </dd>
+                                </div>
+                                <div class="property-row row">
+                                    <dt class="col-xs-4">Quelle</dt>
+                                    <dd class="col-xs-7"><span
+                                        class="no-input">{{ contact.patientmeta.orig_ref }}</span></dd>
+                                </div>
+                                <div class="property-row row">
+                                    <dt class="col-xs-4">Seite vor dem Einstieg</dt>
+                                    <dd class="col-xs-7"><span
+                                        class="no-input">{{ contact.patientmeta.orig_page }}</span></dd>
+                                </div>
+                            </dl>
+                        </div>
+
+                        <!-- <ul class="actions-list"> -->
+                        <div
+                            v-if="contact.queued == 0 && contact.movedback < 2 && hasRoles(['admin', 'user', 'lab']) && ( contact.lab.membership == 1 || contact.lab.membership == 4)">
+                            <div v-if="contact.dates.length">
+                                <h4>Kontakt zur erneuten Bearbeitung an Padento zurückleiten</h4>
+                                <div>
+                                    <a @click="confirmMakequeued()"
+                                       class="btn btn-primary btn-tiny btn-block btn-moveback"
+                                       style="white-space: normal;">Kontakt hat den Termin abgesagt und benötigt einen
+                                        neuen.</a><br>
+                                </div>
+                                <div>
+                                    <a @click="makequeued(contact.id)"
+                                       class="btn btn-primary btn-tiny btn-block btn-moveback"
+                                       style="white-space: normal;">Kontakt ist unentschuldigt nicht zum Termin
+                                        erschienen</a>
+                                </div>
+                            </div>
+                            <div v-if="contact.movedback < 2">
+                                <h4>Kontakt das erste Mal an Padento leiten</h4>
+                                <p>
+                                    <small>Dieser Kontakt wurde noch nie von Padento bearbeitet. Daher können Sie
+                                        diesen
+                                        Kontakt an uns zur Bearbeitung weiterleiten.
+                                    </small>
+                                </p>
+                                <div>
+                                    <a @click="makequeued(contact.id, 'nodate')"
+                                       class="btn btn-primary btn-tiny btn-block btn-moveback"
+                                       style="white-space: normal;">Kontakt von Padento bearbeiten lassen</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div v-if="isAdmin || isUser" v-show="showMap && showresults">
+                            <hr/>
+                            <div id="map" style="height: 450px"></div>
+                        </div>
+                        <!-- </ul> -->
+                    </div>
+                    <div class="col-xs-7 col-md-8" class="contact-info">
+                        <h5 class="stage-heading">Padento Phasen</h5>
+                        <div id="stages">
+                            <ul class="stages">
+                                <li class="stage" data-phase="1"
+                                    v-bind:class="{ 'phase-1' : (contact.phase > 0), 'active' : (contact.phase == 1) }"
+                                    v-on:click="activatePhase">Neu
+                                </li>
+                                <li class="stage" data-phase="2"
+                                    v-bind:class="{ 'phase-2' : (contact.phase > 1), 'active' : (contact.phase == 2) }"
+                                    v-on:click="activatePhase">Kontaktaufnahme
+                                </li>
+                                <li class="stage" data-phase="3"
+                                    v-bind:class="{ 'phase-3' : (contact.phase > 2), 'active' : (contact.phase == 3) }"
+                                    v-on:click="activatePhase">Labor-Termin
+                                    <br>vereinbart
+                                </li>
+                                <li class="stage" data-phase="4"
+                                    v-bind:class="{ 'phase-4' : (contact.phase > 3), 'active' : (contact.phase == 4) }"
+                                    v-on:click="activatePhase">In Betreuung
+                                </li>
+                                <li class="stage" data-phase="5"
+                                    v-bind:class="{ 'phase-5' : (contact.phase > 4), 'active' : (contact.phase == 5) }"
+                                    v-on:click="activatePhase">Auftrag erhalten
+                                </li>
+                                <li class="stage" data-phase="6"
+                                    v-bind:class="{ 'phase-6' : (contact.phase > 5), 'active' : (contact.phase == 6) }"
+                                    v-on:click="activatePhase">Kein Interesse
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="box">
+                            <div class="padento-questions">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <h4 class="padento-questions-heading">Fragen</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="contact-question">
+                                            <dl>
+                                                <div class="property-row row">
+                                                    <dt class="col-xs-7">Patient hat bereits einen
+                                                        <strong>Zahnarzt</strong></dt>
+                                                    <dd class="col-xs-5">
+                                                        <span class="no-input">
+                                    <label class="radio-inline">
+                                      <input type="radio" name="has_dentist" id="dentist1" value="yes"
+                                             v-model="contact.patientmeta.has_dentist" @change="saveContact"> Ja
+                                    </label>
+                                    <label class="radio-inline">
+                                      <input type="radio" name="has_dentist" id="dentist2" value="no"
+                                             v-model="contact.patientmeta.has_dentist" @change="saveContact"> Nein
+                                    </label>
+                                    <label class="radio-inline">
+                                      <input type="radio" name="has_dentist" id="dentist3" value="ns"
+                                             v-model="contact.patientmeta.has_dentist" @change="saveContact"> k.A.
+                                    </label>
+                                  </span>
+                                                    </dd>
+                                                </div>
+                                                <div class="property-row row">
+                                                    <dt class="col-xs-7">Patient hat <strong>Angst</strong> vor der
+                                                        Behandlung
+                                                    </dt>
+                                                    <dd class="col-xs-5">
+                                                        <span class="no-input">
+                                    <label class="radio-inline">
+                                      <input type="radio" name="has_fear" id="fear1" value="yes"
+                                             v-model="contact.patientmeta.has_fear" @change="saveContact"> Ja
+                                    </label>
+                                    <label class="radio-inline">
+                                      <input type="radio" name="has_fear" id="fear2" value="no"
+                                             v-model="contact.patientmeta.has_fear" @change="saveContact"> Nein
+                                    </label>
+                                    <label class="radio-inline">
+                                      <input type="radio" name="has_fear" id="fear3" value="ns"
+                                             v-model="contact.patientmeta.has_fear" @change="saveContact"> k.A.
+                                    </label>
+                                  </span>
+                                                    </dd>
+                                                </div>
+                                                <div class="property-row row">
+                                                    <dt class="col-xs-7">Patient besitzt
+                                                        <strong>Zahnzusatzversicherung</strong></dt>
+                                                    <dd class="col-xs-5">
+                                                        <span class="no-input">
+                                    <label class="radio-inline">
+                                      <input type="radio" name="has_sdi" id="inlineRadio1" value="yes"
+                                             v-model="contact.patientmeta.has_sdi" @change="saveContact"> Ja
+                                    </label>
+                                    <label class="radio-inline">
+                                      <input type="radio" name="has_sdi" id="inlineRadio2" value="no"
+                                             v-model="contact.patientmeta.has_sdi" @change="saveContact"> Nein
+                                    </label>
+                                    <label class="radio-inline">
+                                      <input type="radio" name="has_sdi" id="inlineRadio3" value="ns"
+                                             v-model="contact.patientmeta.has_sdi" @change="saveContact"> k.A.
+                                    </label>
+                                  </span>
+                                                    </dd>
+                                                </div>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="contact-question">
+                                            <dl>
+                                                <div class="property-row row">
+                                                    <dt class="col-xs-7">Patient ist <strong>zufrieden</strong> mit
+                                                        seinem <strong>Zahnarzt</strong></dt>
+                                                    <dd class="col-xs-5">
+                                                        <span class="no-input">
+                                    <label class="radio-inline">
+                                      <input type="radio" name="is_satisfied" id="satisfied1" value="yes"
+                                             v-model="contact.patientmeta.is_satisfied" @change="saveContact"> Ja
+                                    </label>
+                                    <label class="radio-inline">
+                                      <input type="radio" name="is_satisfied" id="satisfied2" value="no"
+                                             v-model="contact.patientmeta.is_satisfied" @change="saveContact"> Nein
+                                    </label>
+                                    <label class="radio-inline">
+                                      <input type="radio" name="is_satisfied" id="satisfied3" value="ns"
+                                             v-model="contact.patientmeta.is_satisfied" @change="saveContact"> k.A.
+                                    </label>
+                                  </span>
+                                                    </dd>
+                                                </div>
+                                                <div class="property-row row">
+                                                    <dt class="col-xs-7">Patient ist an einer
+                                                        <strong>Finanzierung</strong> interessiert
+                                                    </dt>
+                                                    <dd class="col-xs-5">
+                                                        <span class="no-input">
+                                    <label class="radio-inline">
+                                      <input type="radio" name="has_financing" id="financing1" value="yes"
+                                             v-model="contact.patientmeta.has_financing" @change="saveContact"> Ja
+                                    </label>
+                                    <label class="radio-inline">
+                                      <input type="radio" name="has_financing" id="financing2" value="no"
+                                             v-model="contact.patientmeta.has_financing" @change="saveContact"> Nein
+                                    </label>
+                                    <label class="radio-inline">
+                                      <input type="radio" name="has_financing" id="financing3" value="ns"
+                                             v-model="contact.patientmeta.has_financing" @change="saveContact"> k.A.
+                                    </label>
+                                  </span>
+                                                    </dd>
+                                                </div>
+                                                <div class="property-row row">
+                                                    <dt class="col-xs-7">Patient besitzt einen <strong>Heil- und
+                                                        Kostenplan</strong></dt>
+                                                    <dd class="col-xs-5">
+                                                        <span class="no-input">
+                                    <label class="radio-inline">
+                                      <input type="radio" name="has_tacs" id="tacs1" value="yes"
+                                             v-model="contact.patientmeta.has_tacs" @change="saveContact"> Ja
+                                    </label>
+                                    <label class="radio-inline">
+                                      <input type="radio" name="has_tacs" id="tacs2" value="no"
+                                             v-model="contact.patientmeta.has_tacs" @change="saveContact"> Nein
+                                    </label>
+                                    <label class="radio-inline">
+                                      <input type="radio" name="has_tacs" id="tacs3" value="ns"
+                                             v-model="contact.patientmeta.has_tacs" @change="saveContact"> k.A.
+                                    </label>
+                                  </span>
+                                                    </dd>
+                                                </div>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="contact-question">
+                                    <dl>
+                                        <div class="property-row row">
+                                            <dt class="col-xs-3"><strong>Warum ZE gewünscht?:</strong></dt>
+                                            <dd class="col-xs-9">
+                                                <input type="text" name="insurance"
+                                                       v-model="contact.patientmeta.insurance" @blur="saveContact"
+                                                       @keyup.enter="saveContact" style="width: 100%">
+                                            </dd>
+                                        </div>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box create-note-box">
+                            <h4 class="add-note-heading">Notiz speichern</h4>
+                            <textarea name="" id="note" cols="30" rows="10" class="form-control"
+                                      v-model="note"></textarea>
+                            <br>
+                            <button class="btn btn-primary" @click="saveNote(note)">Notiz speichern</button>
+                        </div>
+
+                        <section id="notes">
+                            <article class="note" v-for="note in contact.notes | orderBy 'created_at' -1">
+                                <i class="icon"><i class="fa fa-comment" aria-hidden="true"></i></i>
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <p>
+                                                <strong v-if="note.user.lab[0].labmeta.contact_person">
+                                                    {{ note.user.lab[0].labmeta.contact_person }}
+                                                </strong>
+                                                <strong v-else>{{ note.user.name}}</strong>
+                                                <br>
+                                                <small>{{ note.created_at | niceDate }}</small>
+                                            <hr>
+                                            <ul class="note-actions">
+                                                <!--li><small><a href="">Bearbeiten</a></small></li-->
+                                                <li v-if="isAdmin">
+                                                    <small><a href="/api/note/{{ note.id }}/delete">Löschen</a></small>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-9 note-content">
+                                            <p>{{{ note.msg }}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+                        </section>
+                        <!--<div v-if="note_timeline" v-html="note_timeline"></div>-->
+
+                        <div v-if="timeline">
+                            <br>
+                            <div class="box create-note-box">
+                                <h4 class="add-note-heading">Timeline</h4>
+                            </div>
+                            <div v-html="timeline"></div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<date-modal title="Einen Termin vereinbaren"></date-modal>
+<patient-refer-modal title="Patienten weiterleiten an" v-bind:selected="contact.lab"></patient-refer-modal>
+<calendar-modal title="Kalender"></calendar-modal>
+
+<div id="confirmMakequeued" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Kontakt an Padento zurückleiten</h4>
+            </div>
+            <form role="form">
+                <div class="modal-body">
+                    <p>Wenn Sie diesen Kontakt an das Padento-Team zurückschicken, werden wir versuchen mit diesem
+                        Kontakt aufzunehmen.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" @click="makequeued(contact.id, 'canceled')">
+                        Jetzt zurückleiten
+                    </button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Abbrechen</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

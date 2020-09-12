@@ -1,0 +1,145 @@
+<div>
+    <div class="content">
+        <div class="box">
+            <h3>Labor-Bilder</h3>
+            <div class="row">
+                <div class="col-sm-6">
+                    <form action="/api/fileUpload" method="post" enctype="multipart/form-data">
+                        <input name="bilder[]" type="file" v-fileinput class="file" id="bilder" multiple>
+                        <input type="hidden" name="_token" id="csrf-token">
+                        <input type="hidden" name="lab_id" id="lab_id" value="{{ lab.id }}">
+                        <p>Mit dem Hochladen der Bilder bestätige ich, dass ich die Rechte besitze dieses Bild zu
+                            verwenden. Außerdem habe ich die schriftliche Bestätigung der zu sehenden Personen
+                            eingeholt, um das jeweilige Bild zu veröffentlichen.</p>
+                    </form>
+                    <hr/>
+                    <div v-sortable="{handle: '.handle', onUpdate: sortBilderImages}">
+                        <div class="col-md-4" v-if="images.bilder" v-for="image in images.bilder" :key="image.id">
+                            <img :src="image.url" alt="" class="img-rounded handle">
+                            <button style="position:absolute;top:0;right:0;" class="btn btn-xs btn-danger"
+                                    @click="delete(image.id)">Bild löschen
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="clearfix"></div>
+                    <!--<hr>
+                    <p><strong>Diese Bilder werden mittelfristig entfernt.</strong></p>
+                    <div class="col-sm-4" v-if="bild1">
+                        <img src="/img/laborbilder/bild1{{ lab.id }}_neu.jpg" alt="" class="img-rounded">
+                        <button style="position:absolute;top:0;right:0;" class="btn btn-xs btn-danger"
+                                @click="deleteImage('bild1' + lab.id + '_neu.jpg', 'bild')">Bild löschen
+                        </button>
+                    </div>
+                    <div class="col-sm-4" v-if="bild2">
+                        <img src="/img/laborbilder/bild2{{ lab.id }}_neu.jpg" alt="" class="img-rounded">
+                        <button style="position:absolute;top:0;right:0;" class="btn btn-xs btn-danger"
+                                @click="deleteImage('bild2' + lab.id + '_neu.jpg', 'bild')">Bild löschen
+                        </button>
+                    </div>
+                    <div class="col-sm-4" v-if="bild3">
+                        <img src="/img/laborbilder/bild3{{ lab.id }}_neu.jpg" alt="" class="img-rounded">
+                        <button style="position:absolute;top:0;right:0;" class="btn btn-xs btn-danger"
+                                @click="deleteImage('bild3' + lab.id + '_neu.jpg', 'bild')">Bild löschen
+                        </button>
+                    </div>
+                    <div class="col-sm-4" v-if="bild4">
+                        <img src="/img/laborbilder/bild4{{ lab.id }}_neu.jpg" alt="" class="img-rounded">
+                        <button style="position:absolute;top:0;right:0;" class="btn btn-xs btn-danger"
+                                @click="deleteImage('bild4' + lab.id + '_neu.jpg', 'bild')">Bild löschen
+                        </button>
+                    </div>
+                    <div class="col-sm-4" v-if="bild5">
+                        <img src="/img/laborbilder/bild5{{ lab.id }}_neu.jpg" alt="" class="img-rounded">
+                        <button style="position:absolute;top:0;right:0;" class="btn btn-xs btn-danger"
+                                @click="deleteImage('bild5' + lab.id + '_neu.jpg', 'bild')">Bild löschen
+                        </button>
+                    </div>
+                    <div class="col-sm-4" v-if="bild6">
+                        <img src="/img/laborbilder/bild6{{ lab.id }}_neu.jpg" alt="" class="img-rounded">
+                        <button style="position:absolute;top:0;right:0;" class="btn btn-xs btn-danger"
+                                @click="deleteImage('bild6' + lab.id + '_neu.jpg', 'bild')">Bild löschen
+                        </button>
+                    </div>-->
+                </div>
+                <div class="col-sm-6">
+                    <h3><strong>Hinweis:</strong></h3>
+                    <ul>
+                        <li>Mögliche Dateiformate: JPEG, PNG</li>
+                        <li>Maximale Dateigröße: 1 MB (Empfohlen: Unter 300 KB)</li>
+                        <li>Empfohlene Auflösung: Einheitlich bei allen Bildern</li>
+                        <li>Empfohlene Mindestbreite/Mindesthöhe: 300px</li>
+                        <li>Optimaler Hintergrund: Weiß</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="box">
+            <h3>Labor-Zertifikate</h3>
+            <div class="row">
+                <div class="col-sm-6">
+                    <form action="/api/fileUpload" method="post" enctype="multipart/form-data">
+                        <input name="zert[]" type="file" v-fileinput class="file" id="zert" multiple>
+                        <input type="hidden" name="_token" id="csrf-token2">
+                        <input type="hidden" name="lab_id" id="lab_id" value="{{ lab.id }}">
+                        <p>Mit dem Hochladen der Bilder bestätige ich, dass ich die Rechte besitze dieses Bild zu
+                            verwenden. Außerdem habe ich die schriftliche Bestätigung der zu sehenden Personen
+                            eingeholt, um das jeweilige Bild zu veröffentlichen.</p>
+                    </form>
+                    <hr/>
+                    <div v-sortable="{handle: '.handle', onUpdate: sortZertImages}">
+                        <div class="col-md-4" v-if="images.zert" v-for="image in images.zert" :key="image.id">
+                            <img :src="image.url" alt="" class="img-rounded">
+                            <button style="position:absolute;top:0;right:0;" class="btn btn-xs btn-danger"
+                                    @click="delete(image.id)">Bild löschen
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="clearfix"></div>
+                    <hr>
+                    <!--<p><strong>Diese Bilder werden mittelfristig entfernt.</strong></p>
+                    <div class="col-sm-4" v-if="images.zert1">
+                        <img src="/img/zertifikate/zert1{{ lab.id }}_neu.jpg" alt="" class="img-rounded">
+                        <button style="position:absolute;top:0;right:0;" class="btn btn-xs btn-danger"
+                                @click="deleteImage('zert1' + lab.id + '_neu.jpg', 'zert')">Bild löschen
+                        </button>
+                    </div>
+                    <div class="col-sm-4" v-if="images.zert2">
+                        <img src="/img/zertifikate/zert2{{ lab.id }}_neu.jpg" alt="" class="img-rounded">
+                        <button style="position:absolute;top:0;right:0;" class="btn btn-xs btn-danger"
+                                @click="deleteImage('zert2' + lab.id + '_neu.jpg', 'zert')">Bild löschen
+                        </button>
+                    </div>
+                    <div class="col-sm-4" v-if="images.zert3">
+                        <img src="/img/zertifikate/zert3{{ lab.id }}_neu.jpg" alt="" class="img-rounded">
+                        <button style="position:absolute;top:0;right:0;" class="btn btn-xs btn-danger"
+                                @click="deleteImage('zert3' + lab.id + '_neu.jpg', 'zert')">Bild löschen
+                        </button>
+                    </div>
+                    <div class="col-sm-4" v-if="images.zert4">
+                        <img src="/img/zertifikate/zert4{{ lab.id }}_neu.jpg" alt="" class="img-rounded">
+                        <button style="position:absolute;top:0;right:0;" class="btn btn-xs btn-danger"
+                                @click="deleteImage('zert4' + lab.id + '_neu.jpg', 'zert')">Bild löschen
+                        </button>
+                    </div>
+                    <div class="col-sm-4" v-if="images.zert5">
+                        <img src="/img/zertifikate/zert5{{ lab.id }}_neu.jpg" alt="" class="img-rounded">
+                        <button style="position:absolute;top:0;right:0;" class="btn btn-xs btn-danger"
+                                @click="deleteImage('zert5' + lab.id + '_neu.jpg', 'zert')">Bild löschen
+                        </button>
+                    </div>-->
+                </div>
+                <div class="col-sm-6">
+                    <h3><strong>Hinweis:</strong></h3>
+                    <ul>
+                        <li>Mögliche Dateiformate: JPEG, PNG</li>
+                        <li>Maximale Dateigröße: 1 MB (Empfohlen: Unter 300 KB)</li>
+                        <li>Empfohlene Auflösung: Einheitlich bei allen Bildern</li>
+                        <li>Empfohlene Mindestbreite/Mindesthöhe: 300px</li>
+                        <li>Optimaler Hintergrund: Weiß</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>

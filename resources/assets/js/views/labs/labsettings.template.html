@@ -1,0 +1,153 @@
+<div class="content">
+    <div class="box">
+        <div class="row">
+            <div class="col-md-10">
+                <div v-for="lab in labs">
+                    <div>
+                        <h3>Termineinstellungen <small>{{ lab.name }}</small></h3>
+                        <hr>
+                        <form class="form-horizontal">
+                            <div class="form-group" v-for="set in lab.settings" v-if="set.name != 'excluded_day'">
+                                <label for="{{ set.description }}" class="col-sm-4 control-label">{{ set.description }}</label>
+                                <div class="col-sm-8">
+                                    <div class="input-group">
+                                        <input id="{{ set.description }}" class=" form-control" v-model="set.value" @keyup.enter="saveSetting(set)" @blur="saveSetting(set)">
+                                        <span class="input-group-addon" id="basic-addon2">Minuten</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="form-group">
+                                <label for="selectDay" class="col-sm-4 control-label">Terminzeitraum hinzufügen für:</label>
+                                <div class="col-sm-8">
+                                    <select v-model="selectDay" class="form-control" id="selectDay">
+                                        <option v-for="day in weekdays" v-bind:value="day.id">{{ day.name }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group" v-for="timeFrame in lab.timeframes">
+                                <input type="hidden" v-model="timeFrame.day">
+                                <input type="hidden" v-model="timeFrame.day_of_week">
+                                <label for="" class="col-sm-4 control-label">{{ timeFrame.day_of_week | weekDayNames }}</label>
+                                <div class="col-sm-7">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label for="" class="col-sm-2 control-label">von</label>
+                                                <div class="col-sm-10">
+                                                    <h5><span class="label label-success">{{ timeFrame.startTime }}</span></h5>
+                                                    <!--<input class="form-control" v-model="timeFrame.startTime" type="text">-->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label for="" class="col-sm-2 control-label">bis</label>
+                                                <div class="col-sm-10">
+                                                    <h5><span class="label label-success">{{ timeFrame.endTime }}</span></h5>
+                                                    <!--<input class="form-control" v-model="timeFrame.endTime" type="text">-->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-1">
+                                    <a href="#" class="action">
+                                        <i class="fa fa-trash control-label" aria-hidden="true" @click="removeTimeframe(timeFrame, lab)"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="form-group" v-for="timeFrame in timeFrames">
+                                <input type="hidden" v-model="newTimeFrame.day" value="{{ timeFrame.day }}">
+                                <label for="" class="col-sm-4 control-label">{{ timeFrame.day | weekDayNames }}</label>
+                                <div class="col-sm-7">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label for="" class="col-sm-2 control-label">von</label>
+                                                <div class="col-sm-10">
+                                                    <input class="form-control" v-model="timeFrame.startTime" type="text" name="startTime" value="{{ timeFrame.start }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label for="" class="col-sm-2 control-label">bis</label>
+                                                <div class="col-sm-10">
+                                                    <input class="form-control" v-model="timeFrame.endTime" type="text" name="endTime">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-1">
+                                    <i class="fa fa-trash control-label" aria-hidden="true" @click="removeNewTimeframe(timeFrame)"></i>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button type="button" @click="saveTimeFrames(lab)" class="btn btn-success pull-right">Terminzeiträume speichern</button>
+                            </div>
+                        </form>
+                        <hr/>
+                        <form class="form-horizontal">
+                            <h4>Termine freihalten</h4>
+                            <div class="form-group">
+                                <label for="excludeDay" class="col-sm-4 control-label">Tage an denen keine Termine gewünscht sind:</label>
+                                <div class="col-sm-2" class="trigger">
+                                    <label for="">Von</label>
+                                    <input v-datepicker="from" v-model="from" class="form-control">
+                                </div>
+                                <div class="col-sm-2" class="trigger">
+                                    <label for="">Bis einschließlich</label>
+                                    <input v-datepicker="till" v-model="till" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="excludeDay" class="col-sm-4 control-label"></label>
+                                <div class="col-sm-8">
+                                    <div class="btn btn-success" @click="saveDate(from, till)">Tage speichern</div>
+                                </div>
+                            </div>
+                            <p><strong>Tage, die freigehalten werden:</strong></p>
+                            <div class="form-group" v-for="day in excludedDays">
+                                <label for="" class="col-sm-4 control-label">Bitte keine Termine am: </label>
+                                <div class="col-sm-7">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="col-sm-12 label label-danger" style="line-height: 200%;">{{ day.day | weekDayNames }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-1">
+                                    <i class="fa fa-trash control-label" aria-hidden="true" @click="removeExcludedDay(day)"></i>
+                                </div>
+                            </div>
+                            <div class="form-group" v-for="block in excludedDayBlocks">
+                                <label for="" class="col-sm-4 control-label"></label>
+                                <div class="col-sm-7">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="label label-danger" style="line-height: 200%;">{{ block.from.format('DD-MM-YYYY') }}<span v-if="block.to"> TO {{ block.to.format('DD-MM-YYYY') }}</span></div>
+                                            <a href="#" class="action"><i class="fa fa-trash control-label" aria-hidden="true" @click="removeBlock(block)"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--<div class="form-group" v-for="day in lab.settings" v-if="day.name == 'excluded_day'">
+                                <label for="" class="col-sm-4 control-label"></label>
+                                <div class="col-sm-7">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="label label-danger" style="line-height: 200%;">{{ day.value }}</div>
+                                            <a href="#" class="action"><i class="fa fa-trash control-label" aria-hidden="true" @click="removeSetting(day, lab)"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>-->
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

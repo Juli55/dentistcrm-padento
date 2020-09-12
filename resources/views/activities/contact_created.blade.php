@@ -1,0 +1,1 @@
+<p>Neuer Kontakt <strong>{{ $activity->subject->patientmeta->name }}</strong> erstellt.</p>

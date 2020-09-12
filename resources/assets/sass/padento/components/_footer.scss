@@ -1,0 +1,32 @@
+#colo {
+	background: $bg-medium;
+	@each $breakpoint, $gutter in $grid-column-gutter {
+		@include breakpoint($breakpoint) {
+			padding: $gutter 0;
+			margin-top: $gutter;
+		}
+	}
+	h4 {
+		font-weight: bold;
+		color: $body-font-color;
+	}
+	.meta-nav {
+		margin: 0;
+		ul{
+			margin: 0;
+			@include breakpoint(small only) {
+				text-align: center;
+			}
+		}
+		li {
+			display: inline-block;
+			padding-right: rem-calc(10);
+			font-size: rem-calc(13);
+		}
+		@include breakpoint(small only) {
+			li {
+				text-align: center;
+			}
+		}
+	}
+}

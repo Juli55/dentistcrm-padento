@@ -1,0 +1,216 @@
+
+  @if($count > 0)
+    <div class="row">
+      <div class="column medium-10 medium-centered">
+        <h2 style="color:#4cace5;" class="text-center">Zusammen mit dem Zahnarzt soll der bestmögliche<br/>Zahnersatz für den Patienten erstellt werden.</h2>
+        <p class="text-center">Hier stellen wir Ihnen eine Auswahl von Zahnärtzten vor mit denen wir routiniert und eng zusammenarbeiten:
+          <ul class="medium-block-grid-3">
+            @foreach($dentlabs as $dent)
+              <?php $d = Users::find($dent->dent_id); ?>
+              @if($d->approved != '0')
+                <li>
+                  <div class="dentist">
+                    <div style="background-color:#4cace5;border-radius:12px 12px 0px 0px;padding:1em;color:white;">
+                      <b>{{ $d->realname }}</b>
+                    </div>
+                    <div class="text-center" style="background-color:#d9f2e5;border-radius:0px 0px 12px 12px;">
+                      <img style="border-radius:12px;margin:1em 0em 1em 0em;width:80%;" src="/img/foto{{ $d->account_id }}_200small.jpg" /><br/>
+                      <b style="margin:2em";>{{ Dentmeta::firstOrCreate(['dent_id' => $dent->dent_id])->contact }}</b><br/>
+                      <a href="/praxis/{{ $d->account_id }}" class="button secondary radius" style="margin:1em 1em 1em 1em;width:80%;">
+                        Zum Profil
+                      </a>
+                    </div>
+                  </div>
+                </li>
+              @endif
+            @endforeach
+          </ul>
+      </div>
+    </div>
+  @endif
+  <div class="row">
+    <div class="medium-10 medium-centered columns">
+      <hr>
+      {{--      <p class="centered steps"><img src="{{ URL::to('/') }}/img/informieren_finden_kontaktieren3.png" alt=""><img data-interchange="[/img/informieren_finden_kontaktieren3_kl.png, (small)], [/img/informieren_finden_kontaktieren3.png, (medium)], [/img/informieren_finden_kontaktieren3.png, (large)]"></p>--}}
+    </div>
+  </div>
+  @if(!Session::has('nocontact'))
+    {{--  <div class="row">
+               <div class="medium-8 columns medium-centered">
+               <div class="form-header">
+               <h4 class="centered"><strong>Kontaktieren</strong> Sie {{$lab->users->realname}}</h4>
+               <p class="centered">Wenn Sie das folgende Formular ausfüllen und absenden, wird sich Ihr persönlicher Ansprechpartner innerhalb von 48 Stunden telefonisch bei Ihnen melden und mit Ihnen einen Termin vereinbaren.</p>
+               </div>
+               --}}
+    {{--<p class="centered">Kennen Sie schon unser <a href="//fast.wistia.net/embed/iframe/93im63n76x?popover=true" class="wistia-popover[height=360,playerColor=00aff5,width=640]">Video</a>?</p>
+               <p class="centered"><a href="//fast.wistia.net/embed/iframe/93im63n76x?popover=true" class="wistia-popover[height=360,playerColor=00aff5,width=640]"><img src="https://embed-ssl.wistia.com/deliveries/54aff38af80787af158f5f1f1609f5aefff3dd0d.jpg?image_play_button=true&image_play_button_color=00aff5e0&image_crop_resized=150x84" alt="" /></a></p>
+               <script charset="ISO-8859-1" src="//fast.wistia.com/assets/external/popover-v1.js"></script>--}}
+    {{--
+               {{Form::open(array('url'=>'labore/'.$lab->labmeta->id.'/post','method'=>'POST'))}}
+               <div class="errors">
+               </div>
+               <div class="error" style="color:red;">
+               @if(Session::has('errors'))
+               {{ucfirst(Session::get('errors')->first('name'))}}
+               @endif
+               </div>
+               <div>
+               {{ Form::label('name','Vorname Nachname')}}
+               {{ Form::input('text','name','') }}
+               </div>
+               <div class="error"style="color:red;">
+               @if(Session::has('errors'))
+               {{ucfirst(Session::get('errors')->first('email'))}}
+               @endif
+               </div>
+               <div class="row">
+               <div class="large-6 columns">
+               {{ Form::label('email','E-Mail Adresse') }}
+               {{ Form::input('email','email','') }}
+               </div>
+               <div class="large-6 columns">
+               {{ Form::label('email_confirmation','E-Mail Adresse Wiederholung') }}
+               {{ Form::input('email','email_confirmation','') }}
+               </div>
+               </div>
+               <div class="error"style="color:red;">
+               @if(Session::has('errors'))
+               {{ ucfirst(Session::get('errors')->first('tel')) }}
+               @endif
+               </div>
+               <div>
+               {{ Form::label('tel','Telefon') }}
+               {{ Form::input('tel','tel') }}
+               </div>
+               <div class="row">
+               <div class="medium-4 columns">
+               {{ Form::label('zeitenvon','Erreichbar werktags von:', array('class' => 'inline')) }}
+               </div>
+               <div class="medium-3 columns">
+               {{ Form::select('zeitenvon', array(
+               '08:00Uhr' => '08:00Uhr',
+               '09:00Uhr' => '09:00Uhr',
+               '10:00Uhr' => '10:00Uhr',
+               '11:00Uhr' => '11:00Uhr',
+               '12:00Uhr' => '12:00Uhr',
+               '13:00Uhr' => '13:00Uhr',
+               '14:00Uhr' => '14:00Uhr',
+               '15:00Uhr' => '15:00Uhr',
+               '16:00Uhr' => '16:00Uhr',
+               '17:00Uhr' => '17:00Uhr'
+               ), array('class' => 'blub')) }}
+               </div>
+               <div class="medium-2 columns">
+               <label for="zeitenbis" class="inline">bis:</label>
+               </div>
+               <div class="medium-3 columns">
+               {{ Form::select('zeitenbis', array(
+               '09:00Uhr' => '09:00Uhr',
+               '10:00Uhr' => '10:00Uhr',
+               '11:00Uhr' => '11:00Uhr',
+               '12:00Uhr' => '12:00Uhr',
+               '13:00Uhr' => '13:00Uhr',
+               '14:00Uhr' => '14:00Uhr',
+               '15:00Uhr' => '15:00Uhr',
+               '16:00Uhr' => '16:00Uhr',
+               '17:00Uhr' => '17:00Uhr',
+               '18:00Uhr' => '18:00Uhr'
+               )) }}
+               </div>
+               </div>
+               <div class="error"style="color:red;">
+               @if(Session::has('errors'))
+               @if(Session::get('errors')->first('msg')=='msg muss ausgefüllt sein.')
+               Sie müssen eine Nachricht eingeben.
+               @endif
+               @endif
+               </div>
+               <div>
+               {{ Form::label('msg','Bitte schildern Sie kurz Ihr Anliegen') }}
+               {{ Form::textarea('msg','') }}
+               </div>
+               <label>{{ Form::checkbox('confirm_data') }} Hiermit erkläre ich mich einverstanden, dass Padento meine Daten speichert und an mein ausgewähltes Labor weitergibt.</label>
+               <p class="centered">{{ Form::button('Abschicken', array(
+               'type' => 'submit',
+               'class' => 'radius secondary large-button medium-6 medium-centered',
+               )); }}
+               </p>
+               {{Form::close()}}
+               </div>
+               </div>
+               </div>--}}
+  @endif
+  @if(Session::has('who'))
+    <div class="row">
+      <div class="column small-12">
+        <p>Wann passt es Ihnen am besten?
+      </div>
+      <div class="column large-3">
+        {{ Form::open(array('url' => '/wann', 'method' => 'POST')) }}
+        {{ Form::hidden('who',Session::get('who')) }}
+        {{ Form::hidden('labor',$lab->users->realname) }}
+        {{ Form::hidden('labmail', Account::find($lab->account_id)->email) }}
+        {{ Form::label('zeiten','Erreichbar werktags von:') }}
+        {{ Form::select('zeiten', array(
+            '08:00Uhr' => '08:00Uhr',
+            '09:00Uhr' => '09:00Uhr',
+            '10:00Uhr' => '10:00Uhr',
+            '11:00Uhr' => '11:00Uhr',
+            '12:00Uhr' => '12:00Uhr',
+            '13:00Uhr' => '13:00Uhr',
+            '14:00Uhr' => '14:00Uhr',
+            '15:00Uhr' => '15:00Uhr',
+            '16:00Uhr' => '16:00Uhr',
+            '17:00Uhr' => '17:00Uhr'
+           )) }}
+      </div>
+      <div class="column large-3">
+        {{ Form::label('zeiten2','bis:') }}
+        {{ Form::select('zeitenbis', array(
+            '09:00Uhr' => '09:00Uhr',
+            '10:00Uhr' => '10:00Uhr',
+            '11:00Uhr' => '11:00Uhr',
+            '12:00Uhr' => '12:00Uhr',
+            '13:00Uhr' => '13:00Uhr',
+            '14:00Uhr' => '14:00Uhr',
+            '15:00Uhr' => '15:00Uhr',
+            '16:00Uhr' => '16:00Uhr',
+            '17:00Uhr' => '17:00Uhr',
+            '18:00Uhr' => '18:00Uhr'
+           )) }}
+      </div>
+      <div class="column large-4">
+        {{ Form::submit('abschicken',array('class' => 'button secondary radius expand tiny', 'style' => 'margin-top:1.5rem;')) }}
+      </div>
+    </div>
+  @endif
+  @if(isset($test))
+    <!-- ''''BBBLLLUUUPP'''' -->
+  @endif
+  {{--
+  <a href="#" data-reveal-id="firstModal" class="reveal-link"></a>
+  <!-- Reveal Modals begin -->
+  <div id="firstModal" class="reveal-modal" data-reveal>
+  <h2>Padento auf Facebook</h2>
+  <div class="row">
+  <div class="medium-6 columns">
+  <div class="fb-like-box" data-href="https://www.facebook.com/padento" data-colorscheme="light" data-show-faces="true" data-header="true" data-stream="false" data-show-border="true"></div>
+  </div>
+  <div class="medium-6 columns">
+  <p class="lead">Folgen Sie uns auf Facebook und erhalten Sie Informationen rund um das Thema Zahnersatz und gesunde Zähne.</p>
+  <div class="fb-like" data-href="https://facebook.de/padento" data-layout="standard" data-action="like" data-show-faces="true" data-share="true"></div>
+  <p>Kennen Sie schon unseren Blog?</p>
+  <p><a href="http://padento.de/wissen/blog" class="radius button large secondary expand">Zum Blog</a></p>
+  </div>
+  </div>
+  <a class="close-reveal-modal">&#215;</a>
+  </div>
+  --}}
+  <script>
+   setTimeout(function () {
+       $('a.reveal-link').trigger('click');
+   }, 5000);
+   {{--$(document).ready(function(){
+   $('a.reveal-link').delay(1000).trigger('click');
+   });--}}
+  </script>

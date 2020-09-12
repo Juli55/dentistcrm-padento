@@ -1,0 +1,1 @@
+<p>Padento-Phase gewechselt zu: <strong>{{ dentist_phases($activity->getExtraProperty('phase')) }}</strong>.</p>

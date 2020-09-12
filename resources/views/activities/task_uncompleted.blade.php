@@ -1,0 +1,1 @@
+<p><strong>{{ $activity->getExtraProperty('task') }}</strong> wurde als nicht mehr erledigt markiert.</p>

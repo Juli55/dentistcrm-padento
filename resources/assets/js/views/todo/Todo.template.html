@@ -1,0 +1,68 @@
+<div>
+    <div class="content">
+        <div class="container">
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="box">
+                        <h3>Todo Liste: mit Telefonservice</h3>
+                        <hr>
+                        <form action="#" @submit.prevent="editWithWaiting ? update(todoWithWaiting) : create(todoWithWaiting)">
+                            <div class="input-group">
+                                <input v-model="todoWithWaiting.title" v-focus="true" v-el:todoWithWaitinginput
+                                       type="text" name="title" class="form-control WithWaiting" autofocus>
+                                <span class="input-group-btn">
+                                    <button v-show="!editWithWaiting" type="submit" class="btn btn-primary">Todo hinzufügen</button>
+                                    <button v-show="editWithWaiting" type="submit" class="btn btn-primary">Todo bearbeiten</button>
+                                </span>
+                            </div>
+                        </form>
+                        <hr>
+                        <ul class="list-group" v-if="listWithWaiting.length" v-sortable="{handle: '.handle', onUpdate: sortWithWaitingTasks, onMove: handleTaskMove}">
+                            <li class="list-group-item" v-for="todo in listWithWaiting" :key="todo.id">
+                                {{ todo.title }}
+                                <div class="pull-right">
+                                    <i @click="fillFormEdit(todo)" style="cursor:pointer;" class="fa fa-edit"></i>
+                                    <i v-if="isAdmin" @click="delete(todo.id)" style="color:red; cursor:pointer;" class="fa fa-trash"></i>
+                                    <i class="fa fa-arrows handle"></i>
+                                </div>
+                                <div class="clearfix"></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="box">
+                        <h3>Todo Liste: ohne Telefonservice</h3>
+                        <hr>
+                        <form action="#" @submit.prevent="editWithoutWaiting ? update(todoWithoutWaiting) : create(todoWithoutWaiting)">
+                            <div class="input-group">
+                                <input v-model="todoWithoutWaiting.title" v-el:todoWithoutWaitinginput type="text"
+                                       name="title" class="form-control WithoutWaiting" autofocus>
+                                <span class="input-group-btn">
+                                    <button v-show="!editWithoutWaiting" type="submit" class="btn btn-primary">Todo hinzufügen</button>
+                                    <button v-show="editWithoutWaiting" type="submit" class="btn btn-primary">Todo bearbeiten</button>
+                                </span>
+                            </div>
+                        </form>
+                        <hr>
+                        <ul class="list-group" v-if="listWithoutWaiting.length" v-sortable="{handle: '.handle', onUpdate: sortWithoutWaitingTasks, onMove: handleTaskMove}">
+                            <li class="list-group-item" v-for="todo in listWithoutWaiting" :key="todo.id">
+                                {{ todo.title }}
+                                <div class="pull-right">
+                                    <i @click="fillFormEdit(todo)" style="cursor:pointer;" class="fa fa-edit"></i>
+                                    <i v-if="isAdmin" @click="delete(todo.id)" style="color:red; cursor:pointer;" class="fa fa-trash"></i>
+                                    <i class="fa fa-arrows handle"></i>
+                                </div>
+                                <div class="clearfix"></div>
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

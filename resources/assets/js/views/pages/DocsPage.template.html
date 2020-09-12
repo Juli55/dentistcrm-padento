@@ -1,0 +1,157 @@
+<div>
+  <div class="content">
+  	<div class="container">
+	  	<div class="box">
+
+			<h2>Kontakte</h2>
+			<h3>Neuer Kontakt anlegen</h3>
+			<p>In der Kontaktübersicht, kann nur der Administrator einen neuen Kontakt anlegen.</p>
+			<p>Sobald alle notwendigen Felder ausgefüllt worden sind, erscheint der Button zum speichern.</p>
+			<p>Nach dem Speichern passiert folgendes:</p>
+			<ul>
+				<li>Wenn das Labor der "neuen Gruppe" angehört, wird der Kontakt zurückgehalten</li>
+				<li>Wenn das Labor nicht der "neuen Gruppe" angehört, wird erhält der Kontakt eine Mail mit den Informationen des Labors und das Labor eine Mail mit der Nachricht, dass ein neuer Interessent eingegangen ist.</li>
+			</ul>
+
+			<h3>Auflistung</h3>
+			<h4>Übersicht</h4>
+			<p><strong>Die Suche</strong></p>
+			<p>Die Suche sucht in den Feldern:</p>
+			<ul>
+				<li>Name</li>
+				<li>E-Mail</li>
+				<li>Zip</li>
+				<li>Telefonnummer</li>
+			</ul>
+			<p><strong>Als Administrator:</strong></p>
+			<p>Es stehen folgende Spalten und Filtermöglichkeiten zur Verfügung:</p>
+			<p><strong>Spalten:</strong></p>
+			<ul>
+				<li>ID</li>
+				<li>Name</li>
+				<li>Anfragedatum</li>
+				<li>E-Mail</li>
+				<li>Telefon</li>
+				<li>PLZ</li>
+				<li>Labor (Laborname)</li>
+				<li>Phase</li>
+				<li>Kam rein über (Beschreibt, über welche Webseite der Kontakt kommt)</li>
+				<li>Direkt (Beschreibt, ob dieser Patient über einen Direktlink gekommen ist)</li>
+				<li>Zurückgeschoben (Gibt an, wie oft der Kontakt bereits zurückgeschoben worden ist)</li>
+			</ul>
+			<p>Nach diesen Spalten kann sortiert werden. Durch erneutes klicken auf die Spalte, dreht sich die Sortierung um.</p>
+			<p><strong>Filtermöglichkeiten:</strong></p>
+			<ul>
+				<li>
+					Status
+					<ul>
+						<li>Alle (Ohne Archiv)</li>
+						<li>Bestätigt</li>
+						<li>Unbestätigt</li>
+						<li>Archiviert</li>
+					</ul>
+				</li>
+				<li>
+					Labor
+					<ul>
+						<li>Bei klick auf einem Labor, werden nur die Kontakte des ausgewählten Labores angezeigt.</li>
+					</ul>
+				</li>
+					Phase
+				</li>
+			</ul>
+
+			<p><strong>Als Mitarbeiter:</strong></p>
+			<p><strong>Spalten:</strong></p>
+			<p><strong>Filtermöglichkeiten:</strong></p>
+
+
+			<p><strong>Als Labor:</strong></p>
+			<p>Als Labor sieht man standartmäßig alle Kontakte, die nicht archiviert sind.</p>
+			<h4>Einzelner Kontakt</h4>
+			<h3>Kontaktmanagement</h3>
+			<h4>Phasen</h4>
+			<p>Derzeit gibt es folgende 6 Phasen:
+			<ol>
+				<li>Neu</li>
+				<li>Kontaktaufnahme</li>
+				<li>Besuchstermin vereinbart</li>
+				<li>In Betreuung</li>
+				<li>Auftrag erhalten</li>
+				<li>Kein Interesse</li>
+			</ol>
+			<p>Bei Akivierung der oben gennante Phasen, passiert <strong>nichts</strong> weiter, mit einer Ausnahme:
+			<p>Ist ein Administrator oder Mitarbeiter angemeldet und verschiebt einen Kontakt, der sich gerade in der Verwaltungsschleife befindet auf die Phase "Kein Interesse", so passiert folgendes:
+
+			<ol>
+				<li>Wechsel der Phase auf "Kein Interesse"</li>
+				<li>Entfernen des Kontaktes aus der Verwaltungsschleife</li>
+				<li>Benachrichtigung des Labors über einen neuen Kontakt per Mail</li>
+			</ol>
+
+			<h4>Kontakt weiterleiten</h4>
+			<p>Ein Kontakt kann nur von Administratoren oder Mitarbeitern weitergeleitet werden.</p>
+			<p>Wenn kein anderes Labor ausgewählt wird, ist das standartmäßige Labor des Kontaktes ausgewählt. Für die folgenden Möglichkeiten 1 und 2 muss daher kein Labor gesucht werden, wenn nicht ein anderes ausgewählt werden soll.</p>
+			<p>Es gibt drei Möglichkeiten der Weiterleitung</p>
+			<ul>
+				<li>
+					<strong>Möglichkeit 1: "Kontakt ist nicht erreichbar"</strong> Hierbei passiert folgendes:
+					<ol>
+						<li>Der Kontakt wird aus der Verwaltungsschleife entfernt und ist damit für das Labor sichtbar</li>
+						<li>Es wird automatisch zur Phase 2 gewelchselt</li>
+						<li>Versand einer Mail an das Labor: "Sie haben einen neuen Interessenten"</li>
+						<li>Versand einer Mail an den Kontakt, wenn dieser bereits bestätigt ist: "Wir konnten Sie nicht erreichen. Hier ist ihr Labor"</li>
+					</ol>
+				</li>
+				<li>
+					<strong>Möglichkeit 1: "Kontakt möchte selber Kontakt aufnehmen"</strong> Hierbei passiert folgendes:
+					<ol>
+						<li>Der Kontakt wird als bestätigt markiert</li>
+						<li>Der Kontakt wird aus der Verwaltungschleife entfernt und ist damit sichtbar für das Labor</li>
+						<li>Versand einer Mail an das Labor: "Sie haben einen neuen Interessenten"</li>
+						<li>Versand einer Mail an den Kontakt: "Ihr Labor + Kontaktdaten"</li>
+					</ol>
+				</li>
+				<li>
+					<strong>Möglichkeit 1: "Kontakt Einfach verschieben"</strong> Hierbei passiert folgendes:
+					<ol>
+						<li>Wenn das Labor eines der "neuen Gruppe" ist, wird dieser Kontakt in die Verwaltungsschleife geschoben</li>
+						<li>Wenn das Labor nicht in der "neuen Gruppe" ist, wird der Kontakt einfach verschoben. Es gehen keine Mails raus!</li>
+					</ol>
+				</li>
+			</ul>
+
+
+			<h3 id="kontaktverteilung">Kontaktverteilung</h3>
+			<p>In den Einstellungen können folgende Werte für die Kontaktverteilung gesetzt werden:</p>
+			<ul>
+				<li>
+					<p><strong>Zeitraum zur überprüfung der Patientenanzahl:</strong>
+					<p>In diesem Zeitraum wird verglichen, welches Labor in den letzten eingstellten Tagen am wenigsten Kontakte erhalten hat.</p>
+				</li>
+				<li>
+					<p><strong>Patientenradius Start:</strong>
+					<p>Innerhalb dieses Radiuses um den Patienten (Postleizahl), werden alle Labore gesucht. </p>
+					<p>Jetzt werden diese Labore genommen und unterinander vergliechen. Das Labor mit den wenigsten Patienten in dem eingestellten Zeiraum (Zeitraum zur überprüfung der Patientenanzahl) erhält den Kontakt bzw. den Patienten.</p>
+				</li>
+				<li>
+					<p><strong>Patientenradius Inkrementierung:</strong></p>
+					<p>Sollte innerhalb des Startradius kein Labor gefunden worden sein, wird erneut gesucht mit einem Radius, der um den einsgellten Wert von "Patientenradius Inkrementierung" größer ist.</p>
+				</li>
+				<li>
+					<p><strong>Patientenradius Ende:</strong></p>
+					<p>Sollte nach der ersten Inkrementierung kein Labor gefunden worden sein, passiert dies so oft, bis der eingstellte Radius von "Patientenradius Ende" erreicht ist.</p>
+				</li>
+			</ul>
+			<p><strong>Wichtig:</strong>
+			<ol>
+				<li>Sollte ein Direktlink verwendet werden, wird die Verteilung außer Kraft gesetzt und das Labor des zugehörigen Direktlinks wird immer ausgewählt, wenn ein potentieller Kontakt über diesen Link auf Padento gelankt.</p>
+				<li>Wenn ein Patient erneut mit einer E-Mail-Adresse sich einträgt, wird zunächst das Labor geholt zu dem es das letzte mal weitergeleitet wird. Dieses Labor wird dann auf die Entfernung mit der Postleitzahl überprüft. Sollte die Entfernung größer als die in "Entfernung für ab wann ein Kontakt ein neues Labor bekommen soll" definierte sein, fängt die Umkreissuche wie oben beschrieben erneut an. Sollte die Entfernung kleiner sein, wird wieder das gleiche Labor ausgewählt.
+			</ol>
+
+			<h2>Labore</h2>
+
+	  	</div>
+  	</div>
+  </div>
+</div>

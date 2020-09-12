@@ -1,0 +1,182 @@
+<div>
+  <div class="content">
+    <div class="box">
+      <h2>Labore zuweisen</h2>
+      <hr/>
+      <div class="row">
+        <form class="form-horizontal col-md-7">
+          <div class="form-group">
+            <div class="col-md-4 control-label">
+              <label for="">zugehöriges Labor</label>
+            </div>
+            <div class="col-md-8">
+              <select class="form-control" v-model="selectedLab">
+                <option v-for="lab in labs" v-bind:value="lab.id">
+                  {{ lab.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </form>
+        <ul class="list list-default">
+          <li v-for="lab in lab.labs">{{ lab.name }}</li>
+        </ul>
+      </div>
+      <div class="row">
+        <div class="col-md-7">
+          <div class="col-md-4 col-md-offset-4">
+            <hr/>
+            <a class="btn btn-default" @click="referDent">Labor zuweisen</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="box">
+      <h2>Profil</h2>
+      <hr>
+      <div class="row">
+        <form class="form-horizontal col-md-7">
+          <div class="form-group">
+            <div class="col-md-4 control-label">
+              <label for="welcometext">Begrüßungstext</label>
+              <span class="help-block">Maximal 25 Wörter.</span>
+            </div>
+            <div class="col-md-8">
+              <textarea name="" id="" cols="30" rows="10" class="form-control" v-model="lab.dentmeta.hello" @blur="saveLab" >{{ lab.dentmeta.hello }}</textarea>
+            </div>
+          </div>
+          <hr>
+          <div class="form-group">
+            <div class="col-md-4 control-label">
+              <label for="moretext">Weiterer Text</label>
+              <span class="help-block">Maximal 150 Wörter.</span>
+            </div>
+            <div class="col-md-8">
+              <textarea name="" id="" cols="30" rows="10" class="form-control" v-model="lab.dentmeta.text" @blur="saveLab" >{{ lab.dentmeta.text }}</textarea>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-8 col-md-offset-4">
+              <button type="submit" class="btn btn-primary" @click="saveLab" >Speichern</button>
+            </div>
+          </div>
+        </form>
+        <div class="col-md-5">
+          <h4>Logo</h4>
+          <p>Jpg-Datei, min. 300 px in Breite und Höhe, Hoch-/Querformat/quadratische Form möglich, im Optimalfall mit weißem Hintergrund</p>
+          <p><input name="logo" type="file" id="logo">
+          <p><img src="http://padento.de/img/logo74_175small.jpg" alt="">
+        </div>
+      </div>
+    </div>
+    <div class="box">
+      <h2>Kontaktdaten / Ansprechpartner</h2>
+      <hr>
+      <div class="row">
+        <form class="form-horizontal col-md-8">
+          <div class="form-group">
+            <label for="labname" class="col-md-4 control-label">Name der Praxis</label>
+            <div class="col-md-8">
+              <input type="text" class="form-control" id="labname" v-model="lab.name" @blur="saveLab" >
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="contactname" class="col-md-4 control-label">Ansprechpartner</label>
+            <div class="col-md-8">
+              <input type="text" class="form-control" id="contactname" v-model="lab.dentmeta.contact_person" @blur="saveLab" >
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="contactname" class="col-md-4 control-label">Webseite</label>
+            <div class="col-md-8">
+              <input type="text" class="form-control" id="contactname" v-model="lab.web" @blur="saveLab" >
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="street" class="col-md-4 control-label">Straße, Hausnummer</label>
+            <div class="col-md-8">
+              <input type="text" class="form-control" id="street" v-model="lab.dentmeta.street" @blur="saveLab" >
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="plz" class="col-md-4 control-label">PLZ, Ort</label>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="plz" v-model="lab.dentmeta.zip" @blur="saveLab" >
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="city" v-model="lab.dentmeta.city" @blur="saveLab" >
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="tel" class="col-md-4 control-label">Telefonnummer</label>
+            <div class="col-md-8">
+              <input type="text" class="form-control" id="tel" v-model="lab.dentmeta.tel" @blur="saveLab" >
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-8 col-md-offset-4">
+              <button type="submit" class="btn btn-primary" @click="saveLab">Speichern</button>
+            </div>
+          </div>
+        </form>
+        <div class="col-md-4">
+          <h4>Portraitfoto Ansprechpartner</h4>
+          <p>Jpg-Datei, min. 300 px in Breite und Höhe, Hochformat, Seitenverhältnis 2:3 oder 3:4, im Optimalfall mit hellem Hintergrund
+          <p><input type="file">
+          <p><img src="http://padento.de/img/foto74_200small.jpg" alt="">
+        </div>
+      </div>
+    </div>
+
+
+    <div class="box">
+      <h2>Zugangsdaten</h2>
+      <hr>
+
+      <div class="row">
+        <form class="form-horizontal col-md-8">
+          <div class="form-group">
+            <label for="email" class="col-md-4 control-label">E-Mail-Adresse</label>
+            <div class="col-md-8">
+              <input type="email" class="form-control" id="email" v-model="lab.user.email">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="email-again" class="col-md-4 control-label">E-Mail-Adresse wiederholen</label>
+            <div class="col-md-8">
+              <input type="email" class="form-control" id="email-again" >
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-8 col-md-offset-4">
+              <button type="submit" class="btn btn-primary" @click="saveEmail" >E-Mail-Adresse Speichern</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <h4>Passwort ändern</h4>
+      <hr>
+      <div class="row">
+        <form class="form-horizontal col-md-8">
+          <div class="form-group">
+            <label for="password" class="col-md-4 control-label">Passwort</label>
+            <div class="col-md-8">
+              <input type="password" class="form-control" id="password" >
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="password-again" class="col-md-4 control-label">Passwort wiederholen</label>
+            <div class="col-md-8">
+              <input type="password" class="form-control" id="password-again">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-8 col-md-offset-4">
+              <button type="submit" class="btn btn-primary" @click="savePassword" >Passwort speichern</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

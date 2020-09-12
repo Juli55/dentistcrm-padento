@@ -1,0 +1,49 @@
+  <div>
+    <div class="content">
+      <p>
+      <div class="box">
+        <table class="table">
+          <thead>
+            <th>Name</th>
+            <th>Standardwert</th>
+            <th>Typ</th>
+            <th>Angelegt von</th>
+            <th>Status</th>
+            <th>Aktion</th>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <input class="form-control" v-model="property.name" @blur="saveProperty">
+              </td>
+              <td>
+                <input class="form-control" v-model="property.default" @blur="saveProperty">
+              </td>
+              <td>
+                <div class="form-group">
+                  <select class="form-control" v-model="property.type" @change="savePrpoerty">
+                    <option selected>text</option>
+                    <option>Zahl</option>
+                  </select>
+                </div>
+              <td>
+                {{ property.user.name }}
+              </td>
+              <td>
+                <div class="form-group">
+                  <select class="form-control" v-model="property.status" @change="saveProperty">
+                    <option selected>Aktiv</option>
+                    <option>Deaktivieren</option>
+                  </select>
+                </div>
+              </td>
+              <td>
+                <button class="btn btn-default" @click="saveProperty">Speichern</button>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>

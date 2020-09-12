@@ -1,0 +1,219 @@
+<div>
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="">
+                        <div class="box">
+                            <h4>Mails</h4>
+                            <ul>
+                                <li v-for="email in settings">
+                                    <a href="#mail-{{ email.id }}">{{ email.short_description }}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <div id="mail-{{ email.id }}" class="box" v-for="email in settings">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <form class="form-horizontal">
+                                    <div class="form-group">
+                                        <label for="short_description" class="col-sm-2 control-label">Name</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" name="short_description" id="short_description"
+                                                   class="form-control" @blur="saveMail"
+                                                   v-model="email.short_description">
+                                            <div>System Name: {{email.name}}</div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="short_description"
+                                               class="col-sm-2 control-label">Beschreibung</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" name="description" id="short_description"
+                                                   class="form-control" @blur="saveMail" v-model="email.description">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="subject" class="col-sm-2 control-label">Betreff</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" name="subject" id="subject" class="form-control"
+                                                   @blur="saveMail" v-model="email.subject">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label v-bind:for="'body'+email.id" class="col-sm-2 control-label">Primärer Mailtext</label>
+                                        <div class="col-sm-10">
+                        <textarea cols="20" name="body" v-bind:id="'body'+email.id" style="resize:vertical;" rows="10"
+                                  class="noteditable form-control" @blur="saveMail" v-model="email.body">
+                        </textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label v-bind:for="'footer'+email.id" class="col-sm-2 control-label">Sekundärer Mailtext</label>
+                                        <div class="col-sm-10">
+                        <textarea cols="20" v-bind:id="'footer'+email.id " name="footer" style="resize:vertical;" rows="10"
+                                  class="noteditable form-control" @blur="saveMail" v-model="email.footer">
+                        </textarea>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-2"></div>
+                                        <div class="col-sm-10">
+                                            <button type="submit" class="btn btn-primary" v-on:click="saveMail"
+                                                    mailid="{{ email.id }}">Speichern
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <hr>
+                                <!--a class="btn btn-default" href="/admin/mailpreview/{{ email.id }}" target="_blank">Vorschau</a-->
+                                <!--div class="form-group">
+                                  <label>
+                                    Eine Testmail versenden an:
+                                    <input class="form-control" v-model="testmail">
+                                  </label>
+                                  <a class="btn btn-default" @click="sendTestMail( email.id )">abschicken</a>
+                                </div-->
+                            </div>
+                            <div class="col-md-12">
+                                <h4 class="text-center">Legende</h4>
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        <dl>
+                                            <div class="property-row row">
+                                                <dt class="col-xs-6">Anrede</dt>
+                                                <dd class="col-xs-6"><span class="no-input"><span
+                                                    data-clipboard-text="[anrede]" class="clip">[anrede]</span></span>
+                                                </dd>
+                                            </div>
+                                            <div class="property-row row">
+                                                <dt class="col-xs-6">Begrüßung (Seehr geehrter Herr oder geehrte Frau)
+                                                </dt>
+                                                <dd class="col-xs-6"><span class="no-input"><span
+                                                    data-clipboard-text="[begrüßung]"
+                                                    class="clip">[begrüßung]</span></span></dd>
+                                            </div>
+                                            <div class="property-row row">
+                                                <dt class="col-xs-6">Patientenname</dt>
+                                                <dd class="col-xs-6"><span class="no-input"><span
+                                                    data-clipboard-text="[name]" class="clip">[name]</span></span></dd>
+                                            </div>
+                                            <div class="property-row row">
+                                                <dt class="col-xs-6">Telefonnummer Patient</dt>
+                                                <dd class="col-xs-6"><span class="no-input"><span
+                                                    data-clipboard-text="[kontakttel]" class="clip">[kontakttel]</span></span>
+                                                </dd>
+                                            </div>
+                                            <div class="property-row row">
+                                                <dt class="col-xs-6">Handynummer Patient</dt>
+                                                <dd class="col-xs-6"><span class="no-input"><span
+                                                    data-clipboard-text="[kontaktmobil]"
+                                                    class="clip">[kontaktmobil]</span></span></dd>
+                                            </div>
+                                            <div class="property-row row">
+                                                <dt class="col-xs-6">Bestätigungslink (Button)</dt>
+                                                <dd class="col-xs-6"><span class="no-input"><span
+                                                    data-clipboard-text="[bestätigungslink]" class="clip">[bestätigungslink]</span></span>
+                                                </dd>
+                                            </div>
+                                            <div class="property-row row">
+                                                <dt class="col-xs-6">Patientenname</dt>
+                                                <dd class="col-xs-6"><span class="no-input"><span
+                                                    data-clipboard-text="[name]" class="clip">[name]</span></span></dd>
+                                            </div>
+                                            <div class="property-row row">
+                                                <dt class="col-xs-6">Phasen-Termin</dt>
+                                                <dd class="col-xs-6"><span class="no-input"><span
+                                                    data-clipboard-text="[termin]" class="clip">[termin]</span></span>
+                                                </dd>
+                                            </div>
+                                            <div class="property-row row">
+                                                <dt class="col-xs-6">Upload Link für Dokumentet</dt>
+                                                <dd class="col-xs-6"><span class="no-input"><span
+                                                    data-clipboard-text="[uploadlink]" class="clip">[uploadlink]</span></span>
+                                                </dd>
+                                            </div>
+                                        </dl>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <dl>
+                                            <div class="property-row row">
+                                                <dt class="col-xs-6">Ansprechpartner</dt>
+                                                <dd class="col-xs-6"><span class="no-input"><span
+                                                    data-clipboard-text="[ansprechpartner]" class="clip">[ansprechpartner]</span></span>
+                                                </dd>
+                                            </div>
+                                            <div class="property-row row">
+                                                <dt class="col-xs-6">Laborkontakttelefonnummer</dt>
+                                                <dd class="col-xs-6"><span class="no-input"><span
+                                                        data-clipboard-text="[labortel]"
+                                                        class="clip">[labortel]</span></span></dd>
+                                            </div>
+                                            <div class="property-row row">
+                                                <dt class="col-xs-6">Laborkontaktdaten</dt>
+                                                <dd class="col-xs-6"><span class="no-input"><span
+                                                    data-clipboard-text="[kontaktdaten]"
+                                                    class="clip">[kontaktdaten]</span></span></dd>
+                                            </div>
+                                            <div class="property-row row">
+                                                <dt class="col-xs-6">Padento Backend Link</dt>
+                                                <dd class="col-xs-6"><span class="no-input"><span
+                                                    data-clipboard-text="[padentobackendlink]" class="clip">[padentobackendlink]</span></span>
+                                                </dd>
+                                            </div>
+                                            <div class="property-row row">
+                                                <dt class="col-xs-6">Link zum Kontakt</dt>
+                                                <dd class="col-xs-6"><span class="no-input"><span
+                                                    data-clipboard-text="[kontaktlink]"
+                                                    class="clip">[kontaktlink]</span></span></dd>
+                                            </div>
+                                            <div class="property-row row">
+                                                <dt class="col-xs-6">Link zum Labor</dt>
+                                                <dd class="col-xs-6"><span class="no-input"><span
+                                                    data-clipboard-text="[laborlink]"
+                                                    class="clip">[laborlink]</span></span></dd>
+                                            </div>
+                                            <div class="property-row row">
+                                                <dt class="col-xs-6">Laborname</dt>
+                                                <dd class="col-xs-6"><span class="no-input"><span
+                                                    data-clipboard-text="[laborname]"
+                                                    class="clip">[laborname]</span></span></dd>
+                                            </div>
+                                            <div class="property-row row">
+                                                <dt class="col-xs-6">Labor-Ort</dt>
+                                                <dd class="col-xs-6"><span class="no-input"><span
+                                                    data-clipboard-text="[laborort]"
+                                                    class="clip">[laborort]</span></span></dd>
+                                            </div>
+                                            <div class="property-row row">
+                                                <dt class="col-xs-6">Padento Telefonnummer</dt>
+                                                <dd class="col-xs-6"><span class="no-input"><span
+                                                    data-clipboard-text="[padentotel]" class="clip">[padentotel]</span></span>
+                                                </dd>
+                                            </div>
+                                            <div class="property-row row">
+                                                <dt class="col-xs-6">Padento Mobilnummer</dt>
+                                                <dd class="col-xs-6"><span class="no-input"><span
+                                                    data-clipboard-text="[padentomobil]"
+                                                    class="clip">[padentomobil]</span></span></dd>
+                                            </div>
+                                            <div class="property-row row">
+                                                <dt class="col-xs-6">Padento Blog</dt>
+                                                <dd class="col-xs-6"><span class="no-input"><span
+                                                    data-clipboard-text="[padentoblog]"
+                                                    class="clip">[padentoblog]</span></span></dd>
+                                            </div>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

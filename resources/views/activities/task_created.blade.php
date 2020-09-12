@@ -1,0 +1,1 @@
+<p><strong>{{ $activity->getExtraProperty('task') ? $activity->getExtraProperty('task') : '' }}</strong> <strong>{{ $activity->getExtraProperty('creator') ? ' erstellt durch ' . $activity->getExtraProperty('creator') : ''  }}</strong>.</p>

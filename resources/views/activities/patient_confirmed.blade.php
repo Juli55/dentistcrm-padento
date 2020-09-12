@@ -1,0 +1,1 @@
+<p>Bestätigt von <strong>{{ $activity->causer_name }}</strong>.</p>

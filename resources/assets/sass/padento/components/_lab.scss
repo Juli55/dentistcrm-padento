@@ -1,0 +1,90 @@
+.lab-page {
+	h1 {
+		@each $breakpoint, $gutter in $grid-column-gutter {
+			@include breakpoint($breakpoint) {
+				margin-bottom: $gutter;
+			}
+		}
+	}
+	h3 {
+		color: $primary-color;
+	}
+	.lab-header {
+		background: $bg-light;
+		@each $breakpoint, $gutter in $grid-column-gutter {
+			@include breakpoint($breakpoint) {
+				padding: $gutter 0;
+				margin-bottom: $gutter;
+			}
+		}
+	}
+	.lab-box {
+		background-color: $white;
+		border-radius: $global-radius;
+		@include breakpoint(small only) {
+			@each $breakpoint, $gutter in $grid-column-gutter {
+				@include breakpoint($breakpoint) {
+					margin-bottom: $gutter/2;
+				}
+			}
+		}
+		.lab-box-header {
+			background: $primary-color;
+			color: $white;
+			font-weight: bold;
+			border-top-right-radius: $global-radius;
+			border-top-left-radius: $global-radius;
+			@each $breakpoint, $gutter in $grid-column-gutter {
+				@include breakpoint($breakpoint) {
+					padding: $gutter/2;
+				}
+			}
+		}
+		.lab-box-content {
+			@each $breakpoint, $gutter in $grid-column-gutter {
+				@include breakpoint($breakpoint) {
+					padding: $gutter/2;
+				}
+			}
+			h4 {
+				color: $body-font-color;
+				font-weight: bold;
+			}
+			ul {
+				margin: 0;
+				list-style-type: none;
+				li {
+
+				}
+			}
+		}
+	}
+	.info-box {
+		border: 1px solid darken($bg-light, 5%);
+		border-top-right-radius: $global-radius;
+		border-top-left-radius: $global-radius;
+		@each $breakpoint, $gutter in $grid-column-gutter {
+			@include breakpoint($breakpoint) {
+				margin-bottom: $gutter;
+			}
+		}
+		.info-box-header {
+			border-top-right-radius: $global-radius;
+			border-top-left-radius: $global-radius;
+			background: darken($bg-light, 5%);
+			font-weight: bold;
+			@each $breakpoint, $gutter in $grid-column-gutter {
+				@include breakpoint($breakpoint) {
+					padding: $gutter/2;
+				}
+			}
+		}
+		.info-box-content {
+			@each $breakpoint, $gutter in $grid-column-gutter {
+				@include breakpoint($breakpoint) {
+					padding: $gutter/2;
+				}
+			}
+		}
+	}
+}

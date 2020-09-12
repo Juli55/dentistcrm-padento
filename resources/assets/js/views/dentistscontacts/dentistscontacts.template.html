@@ -1,0 +1,289 @@
+<div>
+    <style>
+        .font-gray {
+            color: #e2e2e2;
+        }
+    </style>
+    <div class="content" id="main-content">
+
+        <div class="box stats-box">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="stat">
+                            <div class="text">Zahnärzte</div>
+                            <div class="number">{{ stats.all }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- NEUER ZAHNARZT BUTTON !!! -->
+        <div class="new-dentist">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newdentistcontact">
+                <i class="fa fa-plus"></i> Neuer Zahnarzt
+            </button>
+        </div>
+        <!-- NEUER ZAHNARZT BUTTON ENDE !!! -->
+
+
+        <!-- FILTERN DER KONTAKTE ANFANG !!! -->
+        <div class="row filter-row" style="padding-top: 10px;">
+            <div class="col-md-10">
+                <form class="filter-form">
+                    <div class="form-group">
+                        <label for="">Phase:</label>
+                        <select v-model="filter.phase.selected"
+                                v-selectpicker="[filter.phase.selected, filterOptions.phase.options]">
+                            <option v-for="phase in filterOptions.phase.options" v-bind:value="phase.value">{{
+                                phase.text }}
+                            </option>
+                        </select>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label>Archiviert:</label>
+                        <select id="status" v-model="filter.status.selected"
+                                v-selectpicker="[filter.status.selected, filterOptions.status.options]">
+                            <option v-for="status in filterOptions.status.options" v-bind:value="status.value">{{
+                                status.text }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" v-if="isAdmin">
+                        <label>Labor:</label>
+                        <select v-model="filter.lab.selected"
+                                v-selectpicker="[filter.lab.selected, filterOptions.lab.options]"
+                                data-live-search="true">
+                            <option value="reset">Alle</option>
+                            <option value="ohne">Ohne Labor</option>
+                            <option data-divider="true"></option>
+                            <option v-for="l in filterOptions.lab.options" v-bind:value="l.id">
+                                {{ labName(l) }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label></label>
+                        <button data-toggle="tooltip" data-placement="top" title="Suche zurücksetzen" type="button"
+                                @click="clearfilter" class="btn btn-default "><i class="fa fa-times"
+                                                                                 aria-hidden="true"></i></button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-2 ">
+                <div class="filter-form ">
+                    <div class="form-group ">
+                        <label>Suche:</label>
+                        <div class="input-group ">
+                            <input type="text " class="form-control " placeholder="Suchen... " v-model="search "
+                                   id="search ">
+                            <span class="input-group-btn ">
+                                <button class="btn btn-default " type="button "><i class="fa fa-search "
+                                                                                   aria-hidden="true "></i></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- FILTERN DER KONTAKTE ENDE !!! -->
+
+
+        <!-- ÜBERSICHT ALLER KONTAKTE ANFANG !!! -->
+        <div class="box table-box ">
+            <div class="table-meta-data ">Kontakte: {{ pagination.total }} | Seite: {{ pagination.current_page }} / {{
+                pagination.last_page }}
+            </div>
+            <div class="table-wrap">
+                <table class="table table-striped table-condensed">
+                    <thead>
+                    <tr>
+                        <th class="sortable " @click="sortBy( 'dentist_contacts.id') " v-if="isAdmin">#</th>
+                        <th class="sortable " @click="sortBy( 'dentistmeta.name') ">Name</th>
+                        <th class="sortable " @click="sortBy( 'created_at') ">Erstellungsdatum</th>
+                        <th v-show="isAdmin">Labor</th>
+                        <th class="sortable " @click="sortBy( 'dentistmeta.email') ">E-Mail</th>
+                        <th class="sortable " @click="sortBy( 'dentistmeta.tel') ">Telefon</th>
+                        <th class="sortable " @click="sortBy( 'dentistmeta.zip') ">PLZ</th>
+                        <th class="sortable " @click="sortBy( 'dentistmeta.city') ">Ort</th>
+                        <th class="sortable " @click="sortBy( 'phase') ">Phase</th>
+                        <th class="sortable " @click="sortBy( 'labDate') ">Phasen-Termin</th>
+
+                        <!--
+                        <th class="sortable " @click="sortBy( 'empDate') "
+                            v-if="isAdmin || isUser">Mitarbeitertermin
+                        </th>
+                        -->
+
+
+                        <!--<th v-if="isAdmin || isUser" class="sortable " @click="sortBy( 'movedback') "><i
+                                class="fa fa-exchange " aria-hidden="true " data-toggle="tooltip " data-placement="top "
+                                title="Zurückgeschoben "></i></th> -->
+                        <!--th class="text-right ">Aktion</th-->
+                        <th>Dokumente</th>
+                        <th v-if="isAdmin"><i class="fa fa-trash " aria-hidden="true "></i></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="dentist in dentists " id="dentist-{{ dentist.id }} ">
+                        <td v-if="isAdmin">{{ dentist.id }}</td>
+                        <td><a v-link="{ name: 'admin.dentistContactSingle', params: { id: dentist.id } } ">{{
+                            dentist.dentistmeta.name }}</a></td>
+                        <td>{{ dentist.created_at | niceDate }}</td>
+                        <td v-show="isAdmin"><a href="/app/labore/{{ dentist.lab.id }}">{{ dentist.lab.name }}</a></td>
+                        <td v-if="dentist.confirmed=='1' "><a href="mailto:{{ dentist.dentistmeta.email }} "><i
+                            class="fa fa-envelope-o " aria-hidden="true "></i></a> {{ dentist.dentistmeta.email }}
+                        </td>
+                        <td v-else><span class="label label-danger ">noch unbestätigt</span></td>
+                        <td>{{ dentist.dentistmeta.tel }}</td>
+                        <td>{{ dentist.dentistmeta.zip }}</td>
+                        <td>{{ dentist.dentistmeta.city }}</td>
+                        <td>
+                            <span class="label label-default phase phasedentist-{{ dentist.phase }} "><a
+                                v-link="{ name: 'admin.dentistContactSingle', params: { id: dentist.id } } ">{{ dentist.phase | translate }}</a></span>
+                        </td>
+
+
+                        <td>
+                            <span
+                                :class="{'font-gray':isPastDate(dentist.labDate)} ">{{ dentist.labDate | niceDate }}</span>
+                        </td>
+
+                        <!--
+                        <td v-if="isAdmin || isUser ">
+                            {{ dentist.empDate | niceDate }}
+                        </td>
+                        -->
+
+
+                        <!-- <td class="text-center " v-if="isAdmin || isUser">{{ dentist.movedback }}</td> -->
+                        <td class="text-center">
+                            <div v-if="dentist.attachments.length">
+                                <a :href="'/attachments/'+attachment.id" :title="attachment.path"
+                                   v-for="attachment in dentist.attachments">
+                                    <i class="fa fa-file" :title="attachment.path"></i>
+                                </a>
+                            </div>
+                        </td>
+
+
+                        <td class="text-center " v-if="isAdmin">
+                            <a href="# " class="del" @click="deletedentist(dentist.id) ">
+                                <i class="fa fa-trash " aria-hidden="true "></i>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="contacts-pagination ">
+                <nav>
+                    <ul class="pagination">
+                        <li v-if="pagination.current_page > 1">
+                            <a href="#" aria-label="Previous" @click.prevent="changePage(pagination.current_page - 1)">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li v-for="page in pagesNumber" v-bind:class="[ page == isActived ? 'active' : '']">
+                            <a href="#" @click.prevent="changePage(page)">{{ page }}</a>
+                        </li>
+                        <li v-if="pagination.current_page < pagination.last_page">
+                            <a href="#" aria-label="Next" @click.prevent="changePage(pagination.current_page + 1)">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="pagination">
+                        <li>
+                            <select v-model="pagination.per_page" v-selectpicker="pagination.per_page"
+                                    @change="perpageChange(pagination.per_page)">
+                                <option v-for="opt in items_per_page" :value="opt.value">{{ opt.value }}</option>
+                            </select>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ÜBERSICHT ALLER KONTAKTE ENDE !!! -->
+
+
+<!-- MODAL FÜR ZAHNARZT ERSTELLEN!!! -->
+<div class="modal fade" id="newdentistcontact" tabindex="-1" role="dialog" aria-labelledby="newdentistcontact">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Neuen Zahnarzt anlegen</h4>
+            </div>
+            <validator name="newDentistContactValidator">
+                <div class="modal-body">
+                    <form class="form-horizontal" novalidate>
+                        <div class="form-group">
+                            <label for="salutation" class="col-sm-4 control-label">Anrede</label>
+                            <div class="col-sm-8">
+                                <select name="salutation" id="salutation" class="form-control"
+                                        v-model="newdentistcontact.salutation">
+                                    <option value="Frau">Frau</option>
+                                    <option value="Herr">Herr</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" v-if="isAdmin">
+                            <label for="labor" class="col-sm-4 control-label">Labor</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="labor" v-model="newdentistcontact.labid">
+                                    <option v-for="l in filterOptions.lab.options" v-bind:value="l.id">
+                                        {{ labName(l) }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-4 control-label">Name</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="name" placeholder="Vorname Nachname"
+                                       v-model="newdentistcontact.name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="zip" class="col-sm-4 control-label">Postleitzahl</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="zip" placeholder="Postleitzahl"
+                                       v-model="newdentistcontact.zip">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email" class="col-sm-4 control-label">E-Mail-Adresse</label>
+                            <div class="col-sm-8">
+                                <input type="email" class="form-control" id="email" placeholder="name.nachname@mail.de"
+                                       v-model="newdentistcontact.email">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone" class="col-sm-4 control-label">Telefonnummer</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="phone" placeholder="0202 45678"
+                                       v-model="newdentistcontact.phone">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                    <button class="btn btn-primary" @click="savedentist" v-if="formReady">Zahnarzt anlegen</button>
+                </div>
+            </validator>
+        </div>
+        <!-- ENDE MODAL ZAHNARZT ERSTELLEN!!! -->
+
+    </div>
+</div>

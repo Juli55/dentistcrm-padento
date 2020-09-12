@@ -1,0 +1,22 @@
+{
+  "private": true,
+  "scripts": {
+    "prod": "gulp --production",
+    "dev": "gulp watch"
+  },
+  "devDependencies": {
+    "bootstrap-sass": "^3.3.0",
+    "gulp": "^3.9.1",
+    "gulp-livereload": "^3.8.1",
+    "gulp-util": "^3.0.8",
+    "laravel-elixir": "^5.0.0"
+  },
+  "dependencies": {
+    "chart.js": "^2.7.0",
+    "jquery-smooth-scroll": "^2.2.0",
+    "lodash": "^4.17.4",
+    "natives": "^1.1.6",
+    "vue-datetime-picker": "^0.1.1",
+    "vue-sortable": "^0.1.3"
+  }
+}

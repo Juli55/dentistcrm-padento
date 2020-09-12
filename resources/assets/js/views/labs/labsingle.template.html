@@ -1,0 +1,375 @@
+<div>
+    <div class="content">
+        <div class="box stats-box" v-if="isAdmin">
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="stat">
+                        <div class="text">Kontakte gesamt</div>
+                        <div class="number">{{ lab.patients.length }} / {{ lab.patients | filterBy '1' in 'confirmed' |
+                            count }} / <span class="green">{{ lab.patients | filterBy '5' in 'phase' | count }}</span>
+                        </div>
+                        <small>insges./bestät./Auftrag</small>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="stat">
+                        <div class="text">Kontakte (dieser Monat)</div>
+                        <div class="number">{{ status.month }}</div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="stat">
+                        <div class="text">Kontakte (30 Tage)</div>
+                        <div class="number">{{ status.thirtydays }}</div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="stat">
+                        <div class="text">Kontakte (7Tage)</div>
+                        <div class="number">{{ status.sevendays }}</div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="stat">
+                        <div class="text">Logins</div>
+                        <div class="number">{{ status.logins }}</div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="stat">
+                        <div class="text">Termine</div>
+                        <div class="number">{{ status.dates }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="box">
+            <h3>Profil bearbeiten</h3>
+            <div class="row">
+                <form class="form-horizontal col-md-7">
+                    <div class="form-group">
+                        <div class="col-md-4 control-label">
+                            <label for="welcometext">Begrüßungstext</label>
+                            <span class="help-block">Maximal 25 Wörter.</span>
+                        </div>
+                        <div class="col-md-8">
+                            <textarea name="" id="" cols="30" rows="10" class="form-control"
+                                      v-model="lab.labmeta.hello">{{ lab.labmeta.hello }}</textarea>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="form-group">
+                        <div class="col-md-4 control-label">
+                            <label for="welcometext">Spezielle Leistungen</label>
+                            <span class="help-block">Was macht Sie einzigartig? Auf welchen Gebieten sind Sie spezialisiert?</span>
+                        </div>
+                        <div class="col-md-8">
+                            <p>
+                                <input type="text" class="form-control" @blur="saveLab" v-model="lab.labmeta.special1">
+                            <p>
+                                <input type="text" class="form-control" @blur="saveLab" v-model="lab.labmeta.special2">
+                            <p>
+                                <input type="text" class="form-control" @blur="saveLab" v-model="lab.labmeta.special3">
+                            <p>
+                                <input type="text" class="form-control" @blur="saveLab" v-model="lab.labmeta.special4">
+                            <p>
+                                <input type="text" class="form-control" @blur="saveLab" v-model="lab.labmeta.special5">
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="form-group">
+                        <div class="col-md-4 control-label">
+                            <label for="moretext">Weiterer Text</label>
+                            <span class="help-block">Maximal 150 Wörter.</span>
+                        </div>
+                        <div class="col-md-8">
+                            <textarea name="" id="" cols="30" rows="10" class="form-control" v-model="lab.labmeta.text"
+                                      @blur="saveLab">{{ lab.labmeta.text }}</textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-4">
+                            <button type="button" class="btn btn-primary" @click="saveLab">Speichern</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="col-md-5">
+                    <h4>Logo</h4>
+                    <p>Jpg-Datei, min. 300 px in Breite und Höhe, Hoch-/Querformat/quadratische Form möglich, im
+                        Optimalfall mit weißem Hintergrund</p>
+                    <form action="/api/fileUpload" method="post" enctype="multipart/form-data">
+                        <input name="logo" type="file" v-fileinput class="file" id="logo">
+                        <input type="hidden" name="_token" id="csrf-token">
+                        <p>Mit dem Hochladen der Bilder bestätige ich, dass ich die Rechte besitze dieses Bild zu
+                            verwenden. Außerdem habe ich die schriftliche Bestätigung der zu sehenden Personen
+                            eingeholt, um das jeweilige Bild zu veröffentlichen.</p>
+                        <input type="hidden" name="lab_id" id="lab_id" value="{{ lab.id }}">
+                    </form>
+                    <p v-if="images.logo"><img :src="images.logo.url" alt="">
+                    <p v-else><img src="/img/logos/logo{{ lab.id }}_neu.jpg" alt="">
+                    <p><a v-link="{ name: 'lab.edit.images' }" class="btn btn-primary">
+                        Bilder und Zertifikate hochladen</a></p>
+                </div>
+            </div>
+        </div>
+        <div class="box">
+            <h3>Kontaktdaten / Ansprechpartner</h3>
+            <div class="row">
+                <form class="form-horizontal col-md-8">
+                    <div class="form-group">
+                        <label for="labname" class="col-md-4 control-label">Name des Labors</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="labname" v-model="lab.name" @blur="saveLab">
+                        </div>
+                    </div>
+                    <div class="form-group" v-if="isAdmin">
+                        <label for="labslug" class="col-md-4 control-label">URL</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="labslug" v-model="lab.slug" @blur="saveLab">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="username" class="col-md-4 control-label">Benutzername</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="username" v-model="lab.user.name"
+                                   @blur="saveLab">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactname" class="col-md-4 control-label">Ansprechpartner</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="contactname"
+                                   v-model="lab.labmeta.contact_person" @blur="saveLab">
+                        </div>
+                    </div>
+                    <!--div class="form-group">
+                        <label for="contactname" class="col-md-4 control-label">Webseite</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="contactname" v-model="lab.labmeta.url" @blur="saveLab">
+                        </div>
+                    </div-->
+                    <div class="form-group">
+                        <label for="street" class="col-md-4 control-label">Straße, Hausnummer</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="street" v-model="lab.labmeta.street"
+                                   @blur="saveLab">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="plz" class="col-md-4 control-label">PLZ, Ort</label>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" id="plz" v-model="lab.labmeta.zip" @blur="saveLab">
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" id="city" v-model="lab.labmeta.city"
+                                   @blur="saveLab">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="plz" class="col-md-4 control-label">Land</label>
+                        <div class="col-md-8">
+                            <select name="country_code" class="form-control" @change="saveLab"
+                                    v-model="lab.labmeta.country_code">
+                                <option v-for="country_code in country_codes" v-bind:value="country_code.key">
+                                    {{ country_code.name }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="tel" class="col-md-4 control-label">Telefonnummer</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="tel" v-model="lab.labmeta.tel" @blur="saveLab">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-4">
+                            <button type="button" class="btn btn-primary" @click="saveLab">Speichern</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="col-md-4">
+                    <h4>Portraitfoto Ansprechpartner</h4>
+                    <p>Jpg-Datei, min. 300 px in Breite und Höhe, Hochformat, Seitenverhältnis 2:3 oder 3:4, im
+                        Optimalfall mit hellem Hintergrund
+                    <form action="/api/fileUpload" method="post" enctype="multipart/form-data">
+                        <input type="file" id="kontaktfoto" v-fileinput name="kontaktfoto" @change="uploadaFile">
+                        <input type="hidden" name="_token" id="csrf-token2">
+                        <p>Mit dem Hochladen der Bilder bestätige ich, dass ich die Rechte besitze dieses Bild zu
+                        verwenden. Außerdem habe ich die schriftliche Bestätigung der zu sehenden Personen
+                        eingeholt, um das jeweilige Bild zu veröffentlichen.</p>
+                        <input type="hidden" name="lab_id" id="lab_id" value="{{ lab.id }}">
+                    </form>
+                    <p v-if="images.kontaktfoto"><img :src="images.kontaktfoto.url" alt="">
+                    <p v-else><img src="/img/kontaktfotos/foto{{ lab.id }}_neu.jpg" alt="">
+                </div>
+            </div>
+        </div>
+        <div class="box">
+            <h3>Zugangsdaten</h3>
+            <div class="row">
+                <form class="form-horizontal col-md-6">
+                    <div class="form-group">
+                        <label for="email" class="col-md-4 control-label">E-Mail-Adresse</label>
+                        <div class="col-md-8">
+                            <input type="email" class="form-control" id="email" v-model="lab.user.email">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email-again" class="col-md-4 control-label">E-Mail-Adresse wiederholen</label>
+                        <div class="col-md-8">
+                            <input type="email" class="form-control" id="email-again">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-4">
+                            <button type="submit" class="btn btn-primary" @click="saveEmail">E-Mail-Adresse Speichern
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <form class="form-horizontal col-md-6">
+                    <div class="form-group">
+                        <label for="password" class="col-md-4 control-label">Passwort</label>
+                        <div class="col-md-8">
+                            <input type="password" class="form-control" id="password" v-model="password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password_confrimation" class="col-md-4 control-label">Passwort wiederholen</label>
+                        <div class="col-md-8">
+                            <input type="password" class="form-control" id="password_confirmation">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-4">
+                            <button type="submit" class="btn btn-primary" @click="savePassword">Passwort speichern
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="box" v-if="isAdmin">
+            <h3>Gruppe</h3>
+            <div class="row">
+                <form class="form-horizontal col-md-8">
+                    <div class="form-group">
+                        <label for="gruppe" class="control-label col-md-4">Gruppe</label>
+                        <div class="col-md-8">
+                            <select name="gruppe" class="form-control" @change="saveLab" v-model="lab.membership">
+                                <option v-for="group in groups" v-bind:value="group.key">
+                                    {{ group.name }}
+                                </option>
+                            </select>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+        </div>
+        <div class="box" v-if="isAdmin">
+            <h3>Status</h3>
+            <div class="row">
+                <form class="form-horizontal col-md-8">
+                    <div class="form-group">
+                        <label for="status" class="control-label col-md-4">Laborstatus</label>
+                        <div class="col-md-8">
+                            <select id="status" v-model="lab.status">
+                                <option v-for="status in stati" v-bind:value="status.key">{{ status.name }}</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="box" v-if="isAdmin">
+            <h3>Login</h3>
+            <div class="row">
+                <form class="form-horizontal col-md-8">
+                    <div class="form-group">
+                        <label for="status" class="control-label col-md-4">Laborlogin</label>
+                        <div class="col-md-8">
+                            <select id="allowlogin" v-model="lab.user.allowlogin">
+                                <option v-for="al in allowlogin" v-bind:value="al.key">{{ al.name }}</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="box" v-if="isAdmin">
+            <div class="row">
+                <form class="form-horizontal col-md-12">
+                    <div class="form-group">
+                        <button type="button" v-if="hasCrmAccess" @click.prevent="toggleCrmAccess"
+                                class="btn btn-danger" style="margin-right: 10px;">Patienten anlegen CRM Zugriff
+                            deaktivieren
+                        </button>
+                        <button type="button" v-else @click.prevent="toggleCrmAccess" class="btn btn-success"
+                                style="margin-right: 10px;">Patienten anlegen CRM
+                            Zugriff aktivieren
+                        </button>
+
+
+                        <button type="button" v-if="hasDentistCrmAccess" @click.prevent="toggleDentistCrmAccess"
+                                class="btn btn-danger" style="margin-right: 10px;">Zahnarzt-CRM Zugriff deaktivieren
+                        </button>
+                        <button type="button" v-else @click.prevent="toggleDentistCrmAccess" class="btn btn-success"
+                                style="margin-right: 10px;">Zahnarzt-CRM
+                            Zugriff aktivieren
+                        </button>
+
+
+                        <!--<button type="button" v-if="hasExtraUsers" @click.prevent="toggleHasExtraUsers"
+                                class="btn btn-danger" style="margin-right: 10px;">Deactivate multiple lab users
+                        </button>
+                        <button type="button" v-else @click.prevent="toggleHasExtraUsers" class="btn btn-success"
+                                style="margin-right: 10px;">
+                            Activate multiple lab users
+                        </button>-->
+
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+        <div class="box table-box" v-if="isAdmin && lab.users.length">
+            <div class="table-wrap">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th><i class="fa fa-circle dot"></i>
+                        <th>Name
+                        <th>Email
+                        <th>Login erlauben
+                        <th><i class="fa fa-sign-in" aria-hidden="true"></i>
+                    <tbody>
+                    <tr v-for="user in lab.users" v-if="lab.users.length">
+                        <td><i class="fa fa-circle dot" v-bind:class="(user.status == 'Aktiv') ? 'activ' : 'not-activ'"
+                               aria-hidden="true"></i>
+                        <td>{{ user.name }}
+                        <td><a href="mailto:{{ user.email }} "><i class="fa fa-envelope-o " aria-hidden="true "></i></a>
+                            {{ user.email }}
+                        <td>
+                            <span v-if="user.allowlogin == 'allow'">Aktiv</span>
+                            <span v-else>Inaktiv</span>
+                        </td>
+
+                        <td><a href="/fl/{{ user.id }}"><i data-toggle="tooltip" data-placement="left"
+                                                           title="Als {{ lab.name }} anmelden" class="fa fa-sign-in"
+                                                           aria-hidden="true"></i></a>
+                </table>
+            </div>
+        </div>
+
+        <a v-if="isAdmin" @click="removeLab(lab.id)" class="btn btn-danger">Labor löschen</a>
+
+    </div>
+</div>

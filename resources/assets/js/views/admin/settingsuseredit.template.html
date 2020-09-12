@@ -1,0 +1,95 @@
+<div>
+  <div class="content">
+    <!--div class="box" v-if="user.roles[0].id == '2'">
+      <h2>Labore zuordnen</h2>
+      <hr>
+      <div class="row">
+        <form class="form-horizontal col-md-8">
+          <div class="form-group">
+            <label for="" class="col-md-4 control-label">Labore zuteilen</label>
+
+            <div class="col-md-8">
+              <select name="" id="" class="form-control" v-model="allocatedlabs">
+                <option value="{{ lab.id }}" v-for="lab in labs" v-bind="lab.id">{{ lab.name }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="" class="col-md-4 control-label">Zuständig für folgende Labore</label>
+            <div class="col-md-8">
+              <ul>
+                <li v-for="lab in user.labs">{{ lab.name }} <i class="fa fa-times"></i></li>
+              </ul>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-8 col-md-offset-4">
+              <button type="submit" class="btn btn-primary" @click="saveAllocatedLab">Speichern</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div-->
+    <div class="box">
+      <h2>Nutzer ändern</h2>
+      <hr>
+      <div class="row">
+        <form class="form-horizontal col-md-8">
+          <div class="form-group">
+            <label for="" class="col-md-4 control-label">Nutzername</label>
+            <div class="col-md-8">
+              <input type="text" class="form-control" v-model="user.name">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="" class="col-md-4 control-label">E-Mail-Adresse</label>
+            <div class="col-md-8">
+              <input type="email" class="form-control" v-model="user.email">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-8 col-md-offset-4">
+              <a class="btn btn-primary" @click="saveUser">Speichern</a>
+            </div>
+          </div>
+        </form>
+      </div>
+      <h4>Rolle Ändern</h4>
+      <hr>
+      <div class="row">
+        <form class="form-horizontal col-md-8">
+          <div class="form-group">
+            <label for="" class="col-md-4 control-label">Rolle</label>
+            <div class="col-md-8">
+              <select class="form-control" v-model="selectedRole" @change="saveRole">
+                <option value="{{ role.id }}" v-for="role in all_roles" v-bind="role.id" v-if="role.id < 3" selected="user.roles">{{ role.display_name }}</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+      <h4>Passwort ändern</h4>
+      <hr>
+      <div class="row">
+        <form class="form-horizontal col-md-8">
+          <div class="form-group">
+            <label for="password" class="col-md-4 control-label">Passwort</label>
+            <div class="col-md-8">
+              <input type="password" class="form-control" id="password" v-model="user.pw_one">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="password_confirmation" class="col-md-4 control-label">Passwort wiederholen</label>
+            <div class="col-md-8">
+              <input type="password" class="form-control" id="password_confirmation" v-model="user.pw_two">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-8 col-md-offset-4">
+              <a class="btn btn-primary" @click="savePassword">Passwort speichern</a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>

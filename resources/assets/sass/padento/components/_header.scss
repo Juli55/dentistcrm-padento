@@ -1,0 +1,79 @@
+#masthead {
+  .header-wrap {
+    position: relative;
+    height: rem-calc(90);
+    padding: rem-calc(15) rem-calc(5);
+    margin-bottom: rem-calc(30);
+  }
+  .burger {
+    display: none;
+  }
+  .close-button {
+    display: none;
+  }
+  .logo {
+    display: inline-block;
+    img {
+      height: auto;
+      max-height: rem-calc(70);
+      line-height: rem-calc(90);
+      width: auto;
+    }
+  }
+  nav {
+    z-index: 100000000;
+  }
+  @include breakpoint(medium) {
+    .header-wrap {
+      overflow: hidden;
+    }
+    nav {
+      display: inline-block;
+      float: right;
+
+      ul {
+        margin: 0;
+        list-style-type: none;
+        li {
+          display: inline-block;
+          a {
+            display: block;
+            margin: 0 10px;
+            line-height: rem-calc(90);
+          }
+        }
+      }
+    }
+  }
+  @include breakpoint(small only) {
+    .burger {
+      @include hamburger($primary-color, rgba($primary-color, 0.8), 30px, 20px, 3px, 3);
+      position: absolute;
+      top: rem-calc(30);
+      right: rem-calc(5);
+      display: inline-block;
+    }
+    nav {
+      box-shadow: -3px 0px 15px rgba(0, 0, 0, .1);
+      display: none;
+      position: fixed;
+      top: 0;
+      right: 0;
+      background-color: $white;
+      width: rem-calc(500);
+      max-width: 90%;
+      height: 100%;
+      padding: rem-calc(15);
+      .close-button {
+        display: block;
+      }
+      &.active {
+        display: block;
+      }
+      padding: 30px;
+      ul {
+        list-style-type: none;
+      }
+    }
+  }
+}

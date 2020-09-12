@@ -1,0 +1,423 @@
+<div>
+    <style>
+        .font-gray {
+            color: #e2e2e2;
+        }
+    </style>
+    <div class="content" id="main-content">
+        <!--pre>{{ shared | json }}</pre-->
+        <div class="box stats-box">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="stat">
+                            <div class="text">Kontakte</div>
+                            <div class="number">{{ stats.all }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat">
+                            <div class="text">bestätigte Kontakte</div>
+                            <div class="number">{{ stats.confirmed }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat">
+                            <div class="text">unbestätigte Kontakte</div>
+                            <div class="number">{{ unconfirmed }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="new-contact" v-if="!isLab || isCrmUser">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newcontact">
+                <i class="fa fa-plus"></i> Neuer Kontakt
+            </button>
+        </div>
+        <div class="row filter-row">
+            <div class="col-md-10">
+                <form class="filter-form">
+                    <div class="form-group">
+                        <label>Status:</label>
+                        <select id="status" v-model="filter.status.selected"
+                                v-selectpicker="[filter.status.selected, filterOptions.status.options]">
+                            <option v-for="status in filterOptions.status.options" v-bind:value="status.value">{{
+                                status.text }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group" v-if="isAdmin">
+                        <label>Labor:</label>
+                        <select v-model="filter.lab.selected"
+                                v-selectpicker="[filter.lab.selected, filterOptions.lab.options]"
+                                data-live-search="true">
+                            <option value="reset">Alle</option>
+                            <option value="ohne">Ohne Labor</option>
+                            <option data-divider="true"></option>
+                            <option v-for="l in filterOptions.lab.options" v-bind:value="l.id">
+                                {{ labName(l) }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group" v-if="isCrmUser">
+                        <label>Kontakte:</label>
+                        <select v-model="filter.lab.selected"
+                                v-selectpicker="[filter.lab.selected]">
+                            <option value="reset">Alle</option>
+                            <option value="current">Dieses Labor</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="">Phase:</label>
+                        <select v-model="filter.phase.selected"
+                                v-selectpicker="[filter.phase.selected, filterOptions.phase.options]">
+                            <option v-for="phase in filterOptions.phase.options" v-bind:value="phase.value">{{
+                                phase.text }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group" v-if="isAdmin">
+                        <label>Schleife:</label>
+                        <select v-model="filter.queued.selected"
+                                v-selectpicker="[filter.queued.selected, filterOptions.queued.options]">
+                            <option v-for="q in filterOptions.queued.options" v-bind:value="q.value">{{ q.text }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group" v-if="isAdmin">
+                        <label>Dokumente:</label>
+                        <select v-model="filter.documents.selected"
+                                v-selectpicker="[filter.documents.selected, filterOptions.documents.options]">
+                            <option v-for="q in filterOptions.documents.options" v-bind:value="q.value">{{ q.text }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label></label>
+                        <button data-toggle="tooltip" data-placement="top" title="Suche zurücksetzen" type="button"
+                                @click="clearfilter" class="btn btn-default "><i class="fa fa-times"
+                                                                                 aria-hidden="true"></i></button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-2 ">
+                <div class="filter-form ">
+                    <div class="form-group ">
+                        <label>Suche:</label>
+                        <div class="input-group ">
+                            <input type="text " class="form-control " placeholder="Suchen... " v-model="search "
+                                   id="search ">
+                            <span class="input-group-btn ">
+                                <button class="btn btn-default " type="button "><i class="fa fa-search "
+                                                                                   aria-hidden="true "></i></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="box table-box ">
+            <div class="table-meta-data ">Kontakte: {{ pagination.total }} | Seite: {{ pagination.current_page }} / {{
+                pagination.last_page }}
+            </div>
+            <div class="table-wrap">
+                <table class="table table-striped table-condensed">
+                    <thead>
+                    <tr>
+                        <th class="sortable " @click="sortBy( 'patients.id') " v-if="isAdmin">#</th>
+                        <th class="sortable " @click="sortBy( 'patientmeta.name') ">Name</th>
+                        <th class="sortable " @click="sortBy( 'created_at') ">Anfragedatum</th>
+                        <th class="sortable " @click="sortBy( 'patientmeta.email') ">E-Mail</th>
+                        <th class="sortable " @click="sortBy( 'patientmeta.tel') ">Telefon</th>
+                        <th class="sortable " @click="sortBy( 'patientmeta.zip') ">PLZ</th>
+                        <th class="sortable " @click="sortBy( 'patientmeta.city') ">Ort</th>
+                        <th class="sortable " @click="sortBy( 'labs.name') " v-if="!isLab">Labor</th>
+                        <th class="sortable " @click="sortBy( 'phase') ">Phase</th>
+                        <th class="sortable " @click="sortBy( 'queued') " v-if="isAdmin"><i
+                            class="fa fa-refresh " aria-hidden="true " data-toggle="tooltip " data-placement="top "
+                            title="Schleife "></i></th>
+                        <th class="ref " v-if="isAdmin" @click="sortBy( 'patientmeta.orig_ref') ">Kam
+                            rein über
+                        </th>
+                        <th v-if="isAdmin" class="sortable " @click="sortBy( 'direct') ">Direkt</th>
+                        <th class="sortable " @click="sortBy( 'labDate') ">Phasen-Termin</th>
+                        <th class="sortable " @click="sortBy( 'empDate') "
+                            v-if="isAdmin || isUser">Mitarbeitertermin
+                        </th>
+                        <th v-if="isAdmin || isUser" class="sortable " @click="sortBy( 'movedback') "><i
+                            class="fa fa-exchange " aria-hidden="true " data-toggle="tooltip " data-placement="top "
+                            title="Zurückgeschoben "></i></th>
+                        <!--th class="text-right ">Aktion</th-->
+                        <th v-if="isAdmin">Dokumente</th>
+                        <th v-if="isAdmin"><i class="fa fa-trash " aria-hidden="true "></i></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="contact in contacts " id="contact-{{ contact.id }} ">
+                        <td v-if="isAdmin">{{ contact.id }}</td>
+                        <td><a v-link="{ name: 'admin.contactSingle', params: { id: contact.id } } ">{{
+                            contact.patientmeta.name }}</a></td>
+                        <td>{{ contact.created_at | niceDate }}</td>
+                        <td v-if="contact.confirmed=='1' "><a href="mailto:{{ contact.patientmeta.email }} "><i
+                            class="fa fa-envelope-o " aria-hidden="true "></i></a> {{ contact.patientmeta.email }}
+                        </td>
+                        <td v-else><span class="label label-danger ">noch unbestätigt</span></td>
+                        <td>{{ contact.patientmeta.tel }}</td>
+                        <td>{{ contact.patientmeta.zip }}</td>
+                        <td>{{ contact.patientmeta.city }}</td>
+                        <td v-if="!isLab">
+                            <a v-link="{ name: 'admin.labSingle', params: { id: contact.lab.id } } "
+                               v-if="isAdmin">{{ contact.lab.name }}</a>
+                            <span v-if="!isAdmin">{{ contact.lab.name }}</span></td>
+                        <td>
+                            <span class="label label-default phase phase-{{ contact.phase }} "><a
+                                v-link="{ name: 'admin.contactSingle', params: { id: contact.id } } ">{{ contact.phase_label }}</a></span>
+                        </td>
+                        <td class="text-center " v-if="isAdmin">
+                            <i class="fa fa-refresh " aria-hidden="true " v-if="contact.queued==1 "></i>
+                            <!-- <i class="fa fa-stop " aria-hidden="true " v-if="contact.queue==0 "></i> -->
+                        </td>
+                        <td class="ref " v-if="isAdmin">{{ contact.patientmeta.orig_ref | shorten }}
+                        </td>
+                        <td class="text-center " v-if="isAdmin"><i class="fa fa-check "
+                                                                   aria-hidden="true "
+                                                                   v-if="contact.direct==1 "></i></td>
+                        <td>
+                          <span :class="{'font-gray':isPastDate(contact.labDate)}" v-if="contact.next_date">
+                              {{ contact.next_date.date | niceDate }}
+                          </span>
+                            <span v-if="contact.next_date.phase != contact.phase"
+                                  :class="contact.next_date.phase_class">{{ contact.next_date.phase_label }}</span>
+                        </td>
+                        <td v-if="isAdmin || isUser ">
+                            <span :class="{'font-gray':isPastDate(contact.empDate)}" v-if="contact.next_employee_date">
+                                {{ contact.next_employee_date.date | niceDate }}
+                            </span>
+                        </td>
+                        <td class="text-center " v-if="isAdmin || isUser">{{ contact.movedback }}</td>
+                        <td class="text-center " v-if="isAdmin">
+                            <div v-if="contact.attachments.length">
+                                <a :href="'/attachments/'+attachment.id" :title="attachment.path"
+                                   v-for="attachment in contact.attachments">
+                                    <i class="fa fa-file" :title="attachment.path"></i>
+                                </a>
+                            </div>
+                        </td>
+                        <td class="text-center " v-if="isAdmin">
+                            <a href="# " class="del" @click="confirmDeleteContact(contact) ">
+                                <i class="fa fa-trash " aria-hidden="true "></i>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="contacts-pagination ">
+                <nav>
+                    <ul class="pagination">
+                        <li v-if="pagination.current_page > 1">
+                            <a href="#" aria-label="Previous" @click.prevent="changePage(pagination.current_page - 1)">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li v-for="page in pagesNumber" v-bind:class="[ page == isActived ? 'active' : '']">
+                            <a href="#" @click.prevent="changePage(page)">{{ page }}</a>
+                        </li>
+                        <li v-if="pagination.current_page < pagination.last_page">
+                            <a href="#" aria-label="Next" @click.prevent="changePage(pagination.current_page + 1)">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="pagination">
+                        <li>
+                            <select v-model="pagination.per_page" v-selectpicker="pagination.per_page"
+                                    @change="perpageChange(pagination.per_page)">
+                                <option v-for="opt in items_per_page" :value="opt.value">{{ opt.value }}</option>
+                            </select>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="newcontact" tabindex="-1" role="dialog" aria-labelledby="newcontact">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Neuen Kontakt anlegen</h4>
+            </div>
+            <validator name="newContactValidator">
+                <div class="modal-body">
+                    <form class="form-horizontal" novalidate>
+                        <div class="form-group">
+                            <label for="salutation" class="col-sm-4 control-label">Anrede</label>
+                            <div class="col-sm-8">
+                                <select name="salutation" id="salutation" class="form-control"
+                                        v-model="newcontact.salutation">
+                                    <option value="Frau">Frau</option>
+                                    <option value="Herr">Herr</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-4 control-label">Name</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="name" placeholder="Vorname Nachname"
+                                       v-model="newcontact.name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="zip" class="col-sm-4 control-label">Postleitzahl</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="zip" placeholder="Postleitzahl"
+                                       v-model="newcontact.zip">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email" class="col-sm-4 control-label">E-Mail-Adresse</label>
+                            <div class="col-sm-8">
+                                <input type="email" class="form-control" id="email" placeholder="name.nachname@mail.de"
+                                       v-model="newcontact.email">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone" class="col-sm-4 control-label">Telefonnummer</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="phone" placeholder="0202 45678"
+                                       v-model="newcontact.phone">
+                            </div>
+                        </div>
+                        <div v-if="!isCrmUser">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Labor Suchen..."
+                                               v-model="searchlab">
+                                        <span class="input-group-btn"><button class="btn btn-default" type="button"><i
+                                            class="fa fa-search" aria-hidden="true"></i></button></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label for="lab">Weiterleiten an Labor:</label>
+                                    <select class="form-control" v-model="newcontact.labid" name="labid" size="3">
+                                        <option
+                                            v-for="lab in labs | orderBy 'name' | filterBy searchlab in 'name' 'labmeta.city'"
+                                            v-if="lab.status == 'aktiv'" v-bind:value="lab.id">
+                                            {{ lab.name }} [{{ lab.labmeta.city }}]
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else>
+                            <input type="hidden" v-model="newcontact.labid" :value="whoami.lab[0].id">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                    <button class="btn btn-primary" @click="savecontact" v-if="formReady">Kontakt anlegen</button>
+                </div>
+            </validator>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deletecontact" tabindex="-1" role="dialog" aria-labelledby="deletecontact">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="deleteContactLabel">Kontakt löschen</h4>
+            </div>
+            <div class="modal-body">
+                <h4>Sicher?</h4>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" value="1" v-model="deleteContactForm.send_mail"> Patient über die Löschung informieren?
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" value="1" v-model="deleteContactForm.delete_all"> Alle Accounts mit gleicher E-Mail Adresse ebenfalls löschen?
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Abbrechen</button>
+                <button type="button" class="btn btn-default" @click="deletecontact">Löschen</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

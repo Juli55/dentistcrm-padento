@@ -1,0 +1,176 @@
+<div class="content" id="main-content">
+    <div class="box stats-box" v-if="isAdmin">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="stat">
+                        <div class="text">aktive Labore</div>
+                        <div class="number">{{ stats.countLabs }}</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat">
+                        <div class="text">Kontakte pro Labor</div>
+                        <div class="number">{{ stats.countContactPastThirtyDays / stats.countLabs | round }}</div>
+                        <div class="sub-text">
+                            <small>in den letzten 30 Tagen</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row filter-row">
+        <div class="col-md-8">
+            <form class="filter-form">
+                <div class="form-group">
+                    <a href="/neues-labor" class="btn btn-primary" target="_blank">Neues Labor</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row filter-row">
+        <div class="col-md-8">
+            <form class="filter-form">
+                <div class="form-group">
+                    <label>Status:</label>
+                    <select id="status" v-model="filter.status.selected"
+                            v-selectpicker="[filter.status.selected, filterOptions.status.options]">
+                        <option v-for="status in filterOptions.status.options" v-bind:value="status.value">{{
+                            status.text }}
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Gruppe:</label>
+                    <select id="membership" v-model="filter.membership.selected"
+                            v-selectpicker="[filter.membership.selected, filterOptions.membership.options]">
+                        <option v-for="membership in filterOptions.membership.options" v-bind:value="membership.value">
+                            {{ membership.text }}
+                        </option>
+                    </select>
+                </div>
+
+
+                <div class="form-group" style="background:white; padding:10px; margin-left: 15px; border-radius:10px;">
+                    Hat Patienten anlegen CRM <input type="checkbox" id="checkbox" name="crm" v-model="filter.isCRM">
+                </div>
+
+
+                <div class="form-group"
+                     style="background:white; padding: 10px; margin-left: 15px; border-radius: 10px;">
+                    Hat Zahnarzt-CRM <input type="checkbox" id="checkbox" name="dentist-crm"
+                                            v-model="filter.isDentistCRM">
+                </div>
+
+                <!--<div class="form-group" style="background:white; padding: 10px; margin-left: 15px; border-radius: 10px;">
+                    Hat multiple user <input type="checkbox" id="checkbox" name="multiple-user" v-model="filter.isMultipleUser">
+                </div>-->
+            </form>
+        </div>
+
+
+        <div class="col-md-4">
+            <div class="filter-form ">
+                <div class="form-group ">
+                    <label>Suche:</label>
+                    <div class="input-group ">
+                        <input type="text " class="form-control " placeholder="Suchen... " v-model="search "
+                               id="search">
+                        <span class="input-group-btn ">
+                            <button class="btn btn-default " type="button "><i class="fa fa-search "
+                                                                               aria-hidden="true "></i></button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="box table-box">
+        <div class="table-meta-data ">Labore: {{ pagination.total }} | Seite: {{ pagination.current_page }} / {{
+            pagination.last_page }}
+        </div>
+        <div class="table-wrap">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th class="sortable" @click="sortBy('id')">#
+                    <th class="sortable" @click="sortBy('status')"><i class="fa fa-circle dot"></i>
+                    <th class="sortable" @click="sortBy('name')">Name
+                    <th class="sortable" @click="sortBy('labmeta.zip')">PLZ
+                    <th class="sortable" @click="sortBy('labmeta.city')"><i data-toggle="tooltip" data-placement="top"
+                                                                            title="Google Maps" class="fa fa-map-marker"
+                                                                            aria-hidden="true"></i> Stadt
+                    <th class="sortable text-right" @click="sortBy('labmeta.count')">Aufrufe
+                    <th class="text-right">Kontakte<br>
+                        <small>(gesamt)</small>
+                    <th class="text-right">Kontakte<br>
+                        <small>(30 Tage)</small>
+                    <th class="text-right">Kontakte<br>
+                        <small>(7 Tage)</small>
+                    <th class="sortable" @click="sortBy('membership')">Gruppe
+                    <th><i class="fa fa-globe" aria-hidden="true"></i></th>
+                    <th class="text-center"><i data-toggle="tooltip" data-placement="top" title="Direktlink"
+                                               class="fa fa-link" aria-hidden="true"></i>
+                    <th class="text-center"><i class="fa fa-sign-in" aria-hidden="true"></i></th>
+                <tbody>
+                <tr v-for="lab in labs">
+                    <td id="labid">{{ lab.id }}
+                    <td><i class="fa fa-circle dot" v-bind:class="(lab.status == 'aktiv') ? 'activ' : 'not-activ'"
+                           aria-hidden="true"></i>
+                    <td><a v-link="{ name: 'admin.labSingle', params: { id: lab.id } }"> {{ lab.name }}</a>
+                    <td>{{ lab.labmeta.zip }}
+                    <td><a
+                        href="http://maps.google.de/?hl=de&q={{ lab.name }}+{{ lab.labmeta.street }}+{{ lab.labmeta.city }}+{{ lab.labmeta.city }}"
+                        target="_blank"><i data-toggle="tooltip" data-placement="top" title="Google Maps"
+                                           class="fa fa-map-marker" aria-hidden="true"></i></a> {{ lab.labmeta.city }}
+                    <td class="text-right">{{ lab.labmeta.count }}
+                    <td class="text-right">{{ lab.all_patient_count[0].aggregate }}
+                    <td class="text-right">{{ lab.thirty_days_patient_count[0].aggregate }}
+                    <td class="text-right">{{ lab.seven_days_patient_count[0].aggregate }}
+                    <td>{{ lab.membership | translateMembership }}
+                    <th><a href="/labor/{{ lab.slug }}" target="_blank"><i class="fa fa-globe"
+                                                                           aria-hidden="true"></i></a></th>
+                    <td class="text-center"><i data-toggle="tooltip" data-placement="left"
+                                               title="Direktlink kopieren von {{ lab.name }}"
+                                               data-clipboard-text="http://{{ hostName }}/l/{{ lab.slug }}"
+                                               @click="clip" class="fa fa-link clip" aria-hidden="true"></i>
+                    <td class="text-center"><a href="/fl/{{ lab.user.id }}"><i data-toggle="tooltip"
+                                                                               data-placement="left"
+                                                                               title="Als {{ lab.name }} anmelden"
+                                                                               class="fa fa-sign-in"
+                                                                               aria-hidden="true"></i></a>
+            </table>
+        </div>
+        <div class="contacts-pagination ">
+            <nav>
+                <ul class="pagination ">
+                    <li v-if="pagination.current_page > 1">
+                        <a href="#" aria-label="Previous" @click.prevent="changePage(pagination.current_page - 1)">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li v-for="page in pagesNumber" v-bind:class="[ page == isActived ? 'active' : '']">
+                        <a href="#" @click.prevent="changePage(page)">{{ page }}</a>
+                    </li>
+                    <li v-if="pagination.current_page < pagination.last_page">
+                        <a href="#" aria-label="Next" @click.prevent="changePage(pagination.current_page + 1)">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="pagination">
+                    <li>
+                        <select v-model="pagination.per_page" v-selectpicker="pagination.per_page"
+                                @change="perpageChange(pagination.per_page)">
+                            <option v-for="opt in items_per_page" :value="opt.value">{{ opt.value }}</option>
+                        </select>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>

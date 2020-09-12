@@ -1,0 +1,52 @@
+.centered {
+	text-align: center;
+}
+.welcome {
+	max-width: rem-calc(800);
+	margin: 0 auto;
+	@each $breakpoint, $gutter in $grid-column-gutter {
+		@include breakpoint($breakpoint) {
+			margin-bottom: $gutter;
+		}
+	}
+}
+h1,h2 {
+	color: $primary-color;
+	small {
+		color: $primary-color;
+	}
+}
+h3 {
+	color: $secondary-color;
+}
+h4 {
+	color: $primary-color;
+}
+.green {
+	color: $secondary-color;
+}
+.blue {
+	color: $primary-color;
+}
+.no-line-height {
+	line-height: 1;
+}
+.green-tag {
+	display: inline-block;
+	border: 2px solid $secondary-color;
+	border-radius: $global-radius;
+	padding-top: 3px;
+	padding-right: 3px;
+	padding-left: 3px;
+}
+
+blockquote {
+	font-style: italic;
+	color: $dark-gray;
+	border-left: 0;
+	padding-left: 0;
+	cite {
+		font-weight: bold;
+		color: $secondary-color;
+	}
+}

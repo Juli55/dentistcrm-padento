@@ -1,0 +1,159 @@
+<div>
+    <div class="content">
+        <div class="container">
+
+
+            <div class="box">
+                <h3>Verteilung überprüfen</h3>
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="" class="col-sm-2 control-label">Postleitzahl</label>
+                        <div class="col-sm-10">
+                            <input type="text" v-model="zip" class="form-control" value="42111"
+                                   @enter="getLabs(zip, email)">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="col-sm-2 control-label">Land</label>
+                        <div class="col-sm-10">
+                            <select name="country" id="country" v-model="country" class="form-control">
+                                <option value="de" selected>Deutschland</option>
+                                <option value="at">Österreich</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="col-sm-2 control-label">E-Mail-Adresse</label>
+                        <div class="col-sm-10">
+                            <input type="mail" v-model="email" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" v-model="nerdmode"> Nerdmode
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="button" class="btn btn-primary" @click="getLabs(zip, email, country)">
+                                Verteilung simulieren
+                            </button>
+                            <a v-link="{ name: 'admin.settings.index' }" class="btn btn-link"><i class="fa fa-cog"></i>
+                                Verteilungseinstellungen ändern</a>
+                        </div>
+                    </div>
+                    <hr>
+                    <div v-if="showresults">
+                        <div v-if="results.patient.lab">
+                            <h4>Patient:</h4>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <dl class="property-fields">
+                                        <div class="property-row row">
+                                            <dt class="col-xs-4">Anrede</dt>
+                                            <dd class="col-xs-7">
+                                                <span
+                                                        class="no-input">{{ results.patient.patientmeta.salutation }}</span>
+                                            </dd>
+                                        </div>
+                                        <div class="property-row row">
+                                            <dt class="col-xs-4">Name</dt>
+                                            <dd class="col-xs-7">
+                                                <span class="no-input">
+										<a v-link="{ name: 'admin.contactSingle', params: { id: results.patient.id } }"
+                                           target="_blank">
+											{{ results.patient.patientmeta.name }}
+										</a>
+									</span>
+                                            </dd>
+                                        </div>
+                                        <div class="property-row row">
+                                            <dt class="col-xs-4">E-Mail-Adresse</dt>
+                                            <dd class="col-xs-7">
+                                                <span class="no-input">{{ results.patient.patientmeta.email }}</span>
+                                            </dd>
+                                        </div>
+                                        <div class="property-row row">
+                                            <dt class="col-xs-4">Postleitzahl</dt>
+                                            <dd class="col-xs-7">
+                                                <span class="no-input">{{ results.patient.patientmeta.zip }}</span>
+                                            </dd>
+                                        </div>
+                                        <div class="property-row row">
+                                            <dt class="col-xs-4">Laborname</dt>
+                                            <dd class="col-xs-7">
+                                                <span class="no-input">{{ results.patient.lab.name }}</span>
+                                            </dd>
+                                        </div>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                        <h4>Verteilungs-Labore:</h4>
+                        <p>
+                            <small><strong>Wichtig:</strong> Das oberste Labor würde den Kontakt erhalten. <a
+                                    v-link="{ name: 'docs' }">Wie kommen diese Labore zustande?</a></small>
+                        </p>
+                        <table class="table table-striped table-condensed">
+                            <thead>
+                            <th>Labor</th>
+                            <th>Stadt</th>
+                            <th>Entfernung zu {{ zip }}</th>
+                            <th>Kontakte in der letzten eingestellten Zeit:</th>
+                            </thead>
+                            <tbody>
+                            <tr v-for="result in results.labs">
+                                <td>{{ result.lab.name }}</td>
+                                <td>{{ result.lab.labmeta.city }}</td>
+                                <td>{{ result.dist | round }}</td>
+                                <td>{{ result.patient_count_last_seven_days }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div v-if="nerdmode">
+                            <pre style="font-size:11px">{{ results | json }}</pre>
+                        </div>
+                    </div>
+                </form>
+
+                <div v-show="showMap && showresults">
+                    <hr/>
+                    <div id="map" style="height: 450px"></div>
+                </div>
+            </div>
+
+            <div class="box">
+                <h3>Kontakte exportieren</h3>
+
+                <div v-if="stop">
+                    <p>Der Export wurde abgebrochen. Bitte Seite neu laden, wenn der Export erneut gestartet werden
+                        soll.</p>
+                </div>
+                <div v-else>
+                    <div v-if="exportStatus == 100">
+                        <p>Der Download wird gestartet. Falls nichts passiert, bitte folgenden Link klicken:
+                            <a :href="downloadLink">Download</a>
+                        </p>
+
+                    </div>
+                    <div v-else>
+                        <div class="number" v-if="csvExport Page > 1">
+                            <h2>{{ exportStatus }} % <i class="fa fa-spinner spin" aria-hidden="true"></i></h2>
+                        </div>
+
+                        <button v-if="csvExportPage == 1" @click="startExport()" class="btn btn-primary">
+                            Export
+                            starten
+                        </button>
+                        <button v-if="csvExportPage > 1" @click="stopExport()" class="btn btn-primary">Export abbrechen
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

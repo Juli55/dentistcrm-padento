@@ -1,0 +1,1 @@
+<p>Direkteingabe von Padento {{ $activity->getExtraProperty('creator') ? ' durch ' . $activity->getExtraProperty('creator') : '' }}</p>

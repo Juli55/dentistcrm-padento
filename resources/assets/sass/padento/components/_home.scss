@@ -1,0 +1,52 @@
+#page.home {
+	.entry-header {
+		text-align: center;
+		.lead {
+
+		}
+	}
+	.finance {
+		.box-wrap {
+			h4 {
+				max-width: rem-calc(800);
+				margin: 0 auto;
+			}
+		}
+	}
+	.finance-boxes {
+		@each $breakpoint, $gutter in $grid-column-gutter {
+			@include breakpoint($breakpoint) {
+				margin-top: $gutter;
+			}
+		}
+		h4 {
+			margin-bottom: 0;
+		}
+	}
+	.process {
+		.blue {
+			font-weight: bold;
+		}
+		ul {
+			@each $breakpoint, $gutter in $grid-column-gutter {
+				@include breakpoint($breakpoint) {
+					padding-top: $gutter/4;
+				}
+			}
+			margin: 0;
+			list-style-type: none;
+			li {
+			}
+		}
+	}
+}
+
+.section {
+	@each $breakpoint, $gutter in $grid-column-gutter {
+		@include breakpoint($breakpoint) {
+			padding: $gutter 0;
+			border-top: 1px solid $light-gray;
+			// margin: $gutter 0;
+		}
+	}
+}

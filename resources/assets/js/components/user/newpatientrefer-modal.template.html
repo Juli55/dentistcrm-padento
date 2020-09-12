@@ -1,0 +1,49 @@
+<div id="assigncontact" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">{{ title }} <strong>{{ selected.name }}</strong></h4>
+            </div>
+            <div class="modal-body">
+                <form role="form">
+                    <div class="form-group">
+                        <label for="lab">Anderes Labor suchen und wählen:</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Suchen..." v-model="searchlab">
+                            <span class="input-group-btn">
+                <button class="btn btn-default" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+              </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <select class="form-control" v-model="selected" size="10">
+                            <option v-for="lab in labs | orderBy 'name' | filterBy searchlab in 'name' 'labmeta.city'" v-if="lab.status == 'aktiv'" v-bind:value="lab">
+                                {{ lab.name }} [{{ lab.labmeta.city }}]
+                            </option>
+                        </select>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" v-model="refertype" value="notavailable" checked> Kontakt ist nicht erreichbar
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" v-model="refertype" value="selfcontact"> Labor vereinbart selber einen Termin
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" v-model="refertype" value="justmove"> Einfach verschieben
+                        </label>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" @click="refer(selected)">Jetzt weiterleiten</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>

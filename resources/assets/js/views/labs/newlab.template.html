@@ -1,0 +1,154 @@
+<div>
+  <div class="content">
+   <div class="box">
+      <!--pre>{{ account | json }}</pre-->
+      <validator name="newLabValidator">
+        <section class="login-credentials">
+          <h2>Zugangsdaten</h2>
+          <hr>
+          <div class="row">
+            <form class="form-horizontal col-md-7" novalidate>
+              <div class="form-group">
+                <label for="name" class="col-md-4 control-label">Name</label>
+                <div class="col-md-8">
+                  <input type="text" name="username" v-validate:username="['required']" class="form-control" id="name" v-model="account.user.name">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="email" class="col-md-4 control-label">E-Mail-Adresse</label>
+                <div class="col-md-8">
+                  <input type="email" class="form-control" id="email" v-validate:email="['required']" v-model="account.user.email">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="password" class="col-md-4 control-label">Passwort</label>
+                <div class="col-md-8">
+                  <input type="password" class="form-control" name="password" v-validate:password="['required']" id="password" v-model="account.user.password">
+                </div>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <section class="contact-person-data">
+          <h2>Kontaktdaten / Ansprechpartner</h2>
+          <hr>
+          <div class="row">
+            <form class="form-horizontal col-md-7">
+              <div class="form-group">
+                <label for="labname" class="col-md-4 control-label">Name des Labors</label>
+                <div class="col-md-8">
+                  <input type="text" class="form-control" id="labname" name="labname" v-validate:labname="['required']" v-model="account.lab.name">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="contactname" class="col-md-4 control-label">Ansprechpartner</label>
+                <div class="col-md-8">
+                  <input type="text" class="form-control" id="contactname" name="contactname" v-validate:contactname="['required']" v-model="account.labmeta.contact_person">
+                </div>
+              </div>
+              <!--div class="form-group">
+                <label for="contactname" class="col-md-4 control-label">Webseite</label>
+                <div class="col-md-8">
+                  <input type="text" class="form-control" id="laburl" name="laburl" v-validate:laburl="['required']" v-model="account.labmeta.url">
+                </div>
+              </div-->
+              <div class="form-group">
+                <label for="street" class="col-md-4 control-label">Straße, Hausnummer</label>
+                <div class="col-md-8">
+                  <input type="text" class="form-control" id="street" name="street" v-validate:street="['required']" v-model="account.labmeta.street">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="plz" class="col-md-4 control-label">PLZ, Ort</label>
+                <div class="col-md-4">
+                  <input type="text" class="form-control" id="zip" name="zip" v-validate:zip="['required']" v-model="account.labmeta.zip">
+                </div>
+                <div class="col-md-4">
+                  <input type="text" class="form-control" id="city" name="city" v-validate:city="['required']" v-model="account.labmeta.city">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="tel" class="col-md-4 control-label">Telefonnummer</label>
+                <div class="col-md-8">
+                  <input type="text" class="form-control" id="tel" name="tel" v-validate:tel="['required']" v-model="account.labmeta.tel">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="street" class="col-md-4 control-label">E-Mail-Adresse</label>
+                <div class="col-md-8">
+                  <input type="email" class="form-control" id="contactemail" name="contactemail" v-validate:contactmail="['required']" v-model="account.labmeta.contact_email">
+                </div>
+              </div>
+            </form>
+            <div class="col-md-4">
+              <!--h4>Portraitfoto Ansprechpartner</h4>
+              <p>Jpg-Datei, min. 300 px in Breite und Höhe, Hochformat, Seitenverhältnis 2:3 oder 3:4, im Optimalfall mit hellem Hintergrund
+              <p><input type="file">
+              <p><img src="http://padento.de/img/foto74_200small.jpg" alt=""-->
+            </div>
+          </div>
+        </section>
+
+        <section class="profile-data">
+          <h2>Profil</h2>
+          <hr>
+          <div class="row">
+            <form class="form-horizontal col-md-7">
+              <div class="form-group">
+                <div class="col-md-4 control-label">
+                  <label for="welcometext">Begrüßungstext</label>
+                  <span class="help-block">Maximal 25 Wörter.</span>
+                </div>
+                <div class="col-md-8">
+                  <textarea name="" id="" cols="30" rows="10" class="form-control"  v-model="account.labmeta.hello">{{ labmeta.hello }}</textarea>
+                </div>
+              </div>
+              <hr>
+              <div class="form-group">
+                <div class="col-md-4 control-label">
+                  <label for="welcometext">Spezielle Leistungen</label>
+                  <span class="help-block">Was macht Sie einzigartig? Auf welchen Gebieten sind Sie spezialisiert?</span>
+                </div>
+                <div class="col-md-8">
+                  <p><input type="text" class="form-control"  v-model="account.labmeta.special1">
+                  <p><input type="text" class="form-control"  v-model="account.labmeta.special2">
+                  <p><input type="text" class="form-control"  v-model="account.labmeta.special3">
+                  <p><input type="text" class="form-control"  v-model="account.labmeta.special4">
+                  <p><input type="text" class="form-control"  v-model="account.labmeta.special5">
+                </div>
+              </div>
+              <hr>
+              <div class="form-group">
+                <div class="col-md-4 control-label">
+                  <label for="moretext">Weiterer Text</label>
+                  <span class="help-block">Maximal 150 Wörter.</span>
+                </div>
+                <div class="col-md-8">
+                  <textarea name="" id="" cols="30" rows="10" class="form-control"  v-model="account.labmeta.text">{{ labmeta.text }}</textarea>
+                </div>
+              </div>
+            </form>
+            <div class="col-md-5">
+              <!--h4>Logo</h4>
+              <p>Jpg-Datei, min. 300 px in Breite und Höhe, Hoch-/Querformat/quadratische Form möglich, im Optimalfall mit weißem Hintergrund</p>
+              <p><input name="logo" type="file" id="logo"></p>
+              <p><img src="http://padento.de/img/logo74_175small.jpg" alt=""></p-->
+            </div>
+          </div>
+        </section>
+        <div class="row">
+          <div class="col-md-7">
+            <div class="row">
+              <div class="col-md-4"></div>
+              <div class="col-md-8">
+                <button class="btn btn-primary" @click="saveLab" v-if="$newLabValidator.valid">Kontakt anlegen</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </validator>
+    </div>
+  </div>
+</div>

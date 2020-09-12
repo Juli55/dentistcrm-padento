@@ -1,0 +1,230 @@
+<div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="box">
+                    <h3>Neueste Kontakte</h3>
+                    <table class="table table-striped table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Anfragedatum</th>
+                        <tbody>
+                        <tr v-for="contact in contacts">
+                            <td><a v-link="{ name: 'admin.contactSingle', params: { id: contact.id } }">{{
+                                contact.patientmeta.name }}</a></td>
+                            <td>{{ contact.created_at.split(/[- :]/)[2].split(' ')[0] }}.{{ contact.created_at.split(/[-
+                                :]/)[1] }}.{{ contact.created_at.split(/[- :]/)[0] }} – {{ contact.created_at.split(/[-
+                                :]/)[2].split(' ')[1] }}:{{ contact.created_at.split(/[- :]/)[3] }}
+                        </tr>
+                    </table>
+                    <a v-link="{ name: 'admin.contacts' }"><i class="fa fa-user"></i> Kontakte anzeigen</a>
+                </div>
+                <div class="box">
+                    <h3>Termine</h3>
+                    <h4>Termine heute
+                        <small>(bevorstehend)</small>
+                    </h4>
+                    <table class="table table-striped table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            </th>
+                            <th>Angelegt von</th>
+                            <th>Datum</th>
+                            <th>Phase</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="date in dates.today_new.data | orderBy 'date' 1">
+                            <td>
+                                <a v-link="{ name: date.patient ? 'admin.contactSingle':'admin.dentistContactSingle', params: { id: date.patient ? date.patient.id :date.dentist_contact.id } }">
+                                    {{ date.patient ? date.patient.patientmeta.name :
+                                    date.dentist_contact.dentistmeta.name }}
+                                </a>
+                                <span v-if="date.patient"><small>(Kontakt)</small></span>
+                                <span v-if="date.dentist_contact"><small>(Zahnarzt)</small></span>
+                            </td>
+                            <td>{{ date.user }}</td>
+                            <td>{{ date.date | niceDate }} Uhr</td>
+                            <td><span :class="date.phase_class">{{ date.phase_label }}</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <h4>Termine heute
+                        <small>(vergangen)</small>
+                    </h4>
+                    <table class="table table-striped table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Angelegt von</th>
+                            <th>Datum</th>
+                            <th>Phase</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="date in dates.today_old.data | orderBy 'date' 1">
+                            <td>
+                                <a v-link="{ name: date.patient ? 'admin.contactSingle':'admin.dentistContactSingle', params: { id: date.patient ? date.patient.id :date.dentist_contact.id } }">
+                                    {{ date.patient ? date.patient.patientmeta.name :
+                                    date.dentist_contact.dentistmeta.name }}
+                                </a>
+                                <span v-if="date.patient"><small>(Kontakt)</small></span>
+                                <span v-if="date.dentist_contact"><small>(Zahnarzt)</small></span>
+                            </td>
+                            <td>{{ date.user }}</td>
+                            <td>{{ date.date | niceDate }} Uhr</td>
+                            <td><span :class="date.phase_class">{{ date.phase_label }}</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <hr>
+                    <p class="clearfix">
+                        <a v-link="{ name: 'my.calendar' }">
+                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                            Alle Termine anzeigen
+                        </a>
+                        <a v-link="{ name: 'my.dentistsCalendar' }" style="float:right">
+                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                            Alle Zahnarzt-Termine anzeigen
+                        </a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <!-- div class="box cta">
+                    <h3>Padento Upgrades</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Sie wollen mehr Zeit für Ihren eigentlichen Job haben?</h4>
+                            <a v-link="{ name: 'upgrades' }" class="btn btn-primary">Upgrade: Terminmanagement</a>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Padento funktioniert für Sie? Sie wollen noch mehr Kontakte?</h4>
+                            <a v-link="{ name: 'upgrades' }" class="btn btn-primary">Upgrade: Mehr Kontakte</a>
+                        </div>
+                    </div>
+                </div -->
+                <div class="box">
+                    <h3>Padento erklärt
+                        <small>Trainingscamp</small>
+                    </h3>
+                    <div class="row" style="min-height: 600px;">
+
+                        <a href="https://ehrich-dental-consulting.mymemberhub.de/auth/login" target="_blank">
+                            <center><img
+                                src="/images/trainingscamp.png"/>
+                            </center>
+                        </a>
+                        <!--
+                          <div class="col-xs-6">
+                              <h4>Telefonservice</h4>
+                              <span class="wistia_embed wistia_async_ytk7o9ea4e popover=true popoverAnimateThumbnail=true"
+                                    style="display:inline-block;height:150px;width:100%">&nbsp;</span>
+                          </div>
+                          <div class="col-xs-6">
+                              <h4>Patientenblatt optimal nutzen</h4>
+                              <span class="wistia_embed wistia_async_gnhg7649yk popover=true popoverAnimateThumbnail=true"
+                                    style="display:inline-block;height:150px;width:100%">&nbsp;</span>
+                          </div>
+                          -->
+                    </div>
+
+                </div>
+
+
+                <!--
+                                    <div class="row">
+                                        <div class="col-xs-6">
+                                            <h4>Kontakte bearbeiten</h4>
+                                            <span class="wistia_embed wistia_async_cnw8ehmsx3 popover=true popoverAnimateThumbnail=true"
+                                                  style="display:inline-block;height:150px;width:100%">&nbsp;</span>
+                                        </div>
+
+                                        <div class="col-xs-6">
+                                            <h4>Einstellungen und Profil</h4>
+                                            <span class="wistia_embed wistia_async_lez2d5v6h1 popover=true popoverAnimateThumbnail=true"
+                                                  style="display:inline-block;height:150px;width:100%">&nbsp;</span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-6">
+                                            <h4>Gespräch mit Patienten</h4>
+                                            <span class="wistia_embed wistia_async_h0q70rbgg3 popover=true popoverAnimateThumbnail=true"
+                                                  style="display:inline-block;height:150px;width:100%">&nbsp;</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                -->
+
+
+                <!--div class="box">
+                    <h3>Webinare</h3>
+                    <table class="table table-striped table-condensed">
+                        <thead>
+                            <th>Name</th>
+                            <th>Datum</th>
+                            <th>Preis</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><a href="https://padento.edudip.com/w/194140" target="_blank">Wie Du mehr Termine mit Patienten bekommst</td><td><small>02.06.2016, 18:00 - 18:45 Uhr</small></td><td>Kostenlos</td>
+                              </tr>
+                              <tr>
+                                <td><a href="https://padento.edudip.com/w/194142" target="_blank">Wie ist der beste Ablauf nachdem der Patient im Labor war?</a></td>
+                                <td><small>09.06.2016, 18:00 - 18:30 Uhr</small></td>
+                                <td>Kostenlos</td>
+                            </tr>
+                            <tr>
+                                <td><a href="https://padento.edudip.com/w/194146" target="_blank">Neue Zahnärzte gewinnen mit Padento</a></td>
+                                <td><small>16.06.2016, 18:00 - 18:45 Uhr</small></td>
+                                <td>Kostenlos</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div-->
+                <div class="box">
+                    <h3>Blog von Padento</h3>
+                    <table class="table table-striped table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Beitrag</th>
+                            <th>Teilen</th>
+                        <tbody>
+                        <tr v-for="feed in feeds.padento.items">
+                            <td><a href="{{ feed.permalink }}" target="_blank">{{ feed.title }}</a></td>
+                            <td><a href="https://www.facebook.com/sharer/sharer.php?u={{ feed.permalink }}"><i
+                                class="fa fa-facebook" aria-hidden="true"></i></a></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><a href="http://padento.de/wissen">Alle Beiträge von Padento</a></td>
+                        </tr>
+                    </table>
+                    <h3>Blog von Rainer Ehrich</h3>
+                    <table class="table table-striped table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Beitrag</th>
+                            <th>Teilen</th>
+                        <tbody>
+                        <tr v-for="feed in feeds.rainerehrich.items">
+                            <td><a href="{{ feed.permalink }}" target="_blank">{{ feed.title }}</a></td>
+                            <td><a href="https://www.facebook.com/sharer/sharer.php?u={{ feed.permalink }}"><i
+                                class="fa fa-facebook" aria-hidden="true"></i></a></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><a href="http://www.rainerehrich.de/blog">Alle Beiträge von Rainer
+                                Ehrich</a></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+            </div>
+            <div class="col-md-6"></div>
+        </div>
+    </div>
+</div>

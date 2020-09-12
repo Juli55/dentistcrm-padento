@@ -1,0 +1,1 @@
+<p>Mitarbeitertermin für den <strong>{{ \Carbon\Carbon::parse($activity->getExtraProperty('date'))->format('d.m.Y H:i') }} Uhr</strong>.</p>

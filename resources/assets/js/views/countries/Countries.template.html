@@ -1,0 +1,167 @@
+<div>
+    <div class="content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="box">
+                        <countries>
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newcountry">
+                                <i class="fa fa-plus"></i> Land hinzufügen
+                            </button>
+                            <hr>
+
+                            <div class="modal fade" id="newcountry" tabindex="-1" role="dialog"
+                                 aria-labelledby="newcountry">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button @click="resetForm" type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close"><span
+                                                    aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title" id="myModalLabel">Land hinzufügen</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="#" @submit.prevent="create()">
+                                                <div class="input-group">
+                                                    <label class="col-sm-4 control-label">Name</label>
+                                                    <div class="col-sm-8">
+                                                        <input v-model="form.country_name" v-el:countriesinput
+                                                               type="text" name="country_name" class="form-control"
+                                                               autofocus>
+                                                    </div>
+
+
+                                                    <label class="col-sm-4 control-label">Kürzel (Country Code)</label>
+                                                    <div class="col-sm-8">
+                                                        <input v-model="form.country_code" v-el:countriesinput
+                                                               type="text" name="country_code" class="form-control"
+                                                               autofocus>
+                                                    </div>
+
+                                                    <button type="submit"
+                                                            class="btn btn-primary">Hinzufügen
+                                                    </button>
+
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h4>Alle Länder</h4>
+
+                            <ul class="list-group">
+                                <li class="list-group-item list-item-hover" v-for="country in list"
+                                    @click="selectCountry(country)">
+                                    {{ country.country_name }}
+                                    <strong>{{ country.country_code}}</strong>
+
+                                    <div class="pull-right">
+                                        <button @click="show(country.id)" class="btn btn-primary btn-xs"
+                                                data-toggle="modal"
+                                                data-target="#editcountry">
+                                            Bearbeiten
+                                        </button>
+                                        <button @click="delete(country.id)" class="btn btn-danger btn-xs">
+                                            Löschen
+                                        </button>
+                                    </div>
+                                </li>
+                            </ul>
+
+
+                            <div class="modal fade" id="editcountry" tabindex="-1" role="dialog"
+                                 aria-labelledby="editcountry">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button @click="resetForm" type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close"><span
+                                                    aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title" id="myModalLabel2">Land bearbeiten</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="#" @submit.prevent="edit ? update(form.id) : create()">
+                                                <div class="input-group">
+
+                                                    <label class="col-sm-4 control-label">
+                                                        Name
+                                                    </label>
+
+                                                    <div class="col-sm-8">
+                                                        <input v-model="form.country_name" v-el:countriesinput
+                                                               type="text"
+                                                               name="country_name" class="form-control" autofocus>
+                                                    </div>
+
+
+                                                    <label class="col-sm-4 control-label">
+                                                        Kürzel (Country Code)
+                                                    </label>
+
+                                                    <div class="col-sm-8">
+                                                        <input v-model="form.country_code" v-el:countriesinput
+                                                               type="text"
+                                                               name="country_code" class="form-control" autofocus>
+                                                    </div>
+
+                                                    <button v-show="edit" type="submit"
+                                                            class="btn btn-primary">Bestätigen
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </countries>
+                    </div>
+
+                    <div class="box">
+                        <span>Ausgewählt: {{ selectedCountry.country_name }}</span>
+                        <hr>
+                        <form action="#" @submit.prevent="createZipCode()">
+                            <div class="input-group">
+                                <div class="col-sm-2">
+                                    <strong>PLZ</strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input v-model="zipForm.zip_code" v-el:zipcodeinput
+                                           type="text" name="zip_code" class="form-control"
+                                           autofocus>
+                                </div>
+                                <div class="col-sm-2">
+                                    <button type="submit" class="btn btn-primary">Hinzufügen</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <input @keyup.enter="searchZipCodes" v-model="search" type="text" placeholder="Suchen..." class="form-control">
+                    </div>
+
+                    <ul class="list-group" v-if="zipCodes.length">
+                        <li class="list-group-item" v-for="zipcode in zipCodes">
+                            <strong>{{ zipcode.zip_code}}</strong>
+
+                            <div class="pull-right">
+                                <button @click="deleteZipCode(zipcode.id)" class="btn btn-danger btn-xs">
+                                    <i class="fa fa-remove"></i>
+                                </button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

@@ -1,0 +1,117 @@
+<div>
+  <div class="content">
+   <div class="box">
+     <!--h2>Kontaktdaten / Ansprechpartner</h2>
+      <hr>
+      <div class="row">
+        <form class="form-horizontal col-md-8">
+          <div class="form-group">
+            <label for="labname" class="col-md-4 control-label">Name des Labors</label>
+            <div class="col-md-8">
+              <input type="text" class="form-control" id="labname" v-model="lab.name">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="contactname" class="col-md-4 control-label">Ansprechpartner</label>
+            <div class="col-md-8">
+              <input type="text" class="form-control" id="contactname" v-model="labmeta.contact_person">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="contactname" class="col-md-4 control-label">Webseite</label>
+            <div class="col-md-8">
+              <input type="text" class="form-control" id="contactname" v-model="labmeta.url">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="street" class="col-md-4 control-label">Straße, Hausnummer</label>
+            <div class="col-md-8">
+              <input type="text" class="form-control" id="street" v-model="labmeta.street">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="plz" class="col-md-4 control-label">PLZ, Ort</label>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="plz" v-model="labmeta.zip">
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="city" v-model="labmeta.city">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="tel" class="col-md-4 control-label">Telefonnummer</label>
+            <div class="col-md-8">
+              <input type="text" class="form-control" id="tel" v-model="labmeta.tel">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="street" class="col-md-4 control-label">E-Mail-Adresse</label>
+            <div class="col-md-8">
+              <input type="email" class="form-control" id="street" v-model="labmeta.contact_email">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-8 col-md-offset-4">
+              <button type="submit" class="btn btn-primary">Speichern</button>
+            </div>
+          </div>
+        </form>
+        <div class="col-md-4">
+          <h4>Portraitfoto Ansprechpartner</h4>
+          <p>Jpg-Datei, min. 300 px in Breite und Höhe, Hochformat, Seitenverhältnis 2:3 oder 3:4, im Optimalfall mit hellem Hintergrund
+          <p><input type="file">
+          <p><img src="http://padento.de/img/foto74_200small.jpg" alt="">
+        </div>
+      </div>
+    </div-->
+  <h2>Zugangsdaten</h2>
+  <hr>
+  <div class="row">
+    <form class="form-horizontal col-md-8">
+      <div class="form-group">
+        <label for="name" class="col-md-4 control-label">Name</label>
+        <div class="col-md-8">
+          <input type="text" class="form-control" id="name" v-model="user.name">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="email" class="col-md-4 control-label">E-Mail-Adresse</label>
+        <div class="col-md-8">
+          <input type="email" class="form-control" id="email" v-model="user.email">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="email-again" class="col-md-4 control-label">E-Mail-Adresse wiederholen</label>
+        <div class="col-md-8">
+          <input type="email" class="form-control" id="email-again" >
+        </div>
+      </div>
+    </form>
+  </div>
+  <h4>Passwort ändern</h4>
+  <hr>
+  <div class="row">
+    <form class="form-horizontal col-md-8">
+      <div class="form-group">
+        <label for="password" class="col-md-4 control-label">Passwort</label>
+        <div class="col-md-8">
+          <input type="password" class="form-control" id="password" v-model="user.password">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="password_confrimation" class="col-md-4 control-label">Passwort wiederholen</label>
+        <div class="col-md-8">
+          <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" v-model="user.password_confirmation" >
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-8 col-md-offset-4">
+          <button type="submit" class="btn btn-primary" @click="saveUser">Neuen Nutzer anlegen</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+</div>
+</div>
